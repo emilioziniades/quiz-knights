@@ -9,22 +9,9 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
-
-function App() {
-  return (
-    <>
-      <h1>The Quiz Knights</h1>
-      <div className="card">
-        <p>How did we do?</p>
-      </div>
-      <h2>Average Score By Category</h2>
-      <Bar options={options} data={data} />
-    </>
-  );
-}
-
-export default App;
+import data_banana from "./data.json";
+import { Category, Data, labels } from "./types";
+import { average, titleCase } from "./utils";
 
 ChartJS.register(
   CategoryScale,
@@ -35,33 +22,48 @@ ChartJS.register(
   Legend,
 );
 
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-    title: {
-      display: true,
-      text: "Chart.js Bar Chart",
-    },
-  },
-};
+function AverageScoreByCategory({ data }: { data: Data }) {
+  const averages = labels.map((label: Category) =>
+    average(data.map((datum) => datum.category_scores[label])),
+  );
+  return (
+    <Bar
+      options={{
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: false,
+          },
+        },
+      }}
+      data={{
+        labels: labels.map(titleCase),
+        datasets: [
+          {
+            label: "Average Score By Category",
+            data: averages,
+            backgroundColor: "rgba(255, 99, 132, 0.5)",
+          },
+        ],
+      }}
+    />
+  );
+}
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
+function App() {
+  return (
+    <>
+      <h1>The Quiz Knights</h1>
+      <p>How did we do?</p>
+      <h2>Average Score By Category</h2>
+      <AverageScoreByCategory data={data_banana as Data} />
+      <h2>Placement Across Rounds</h2>
+      <h2>Score Across Rounds</h2>
+    </>
+  );
+}
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-    {
-      label: "Dataset 2",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
-  ],
-};
+export default App;

@@ -15,5 +15,22 @@
     },
     "double_up_category": "science",
     "round_placement": [12, 14, 13, 14, 14]
+  },
+  {
+    "date": "2024-03-20",
+    "category_scores": {
+      "history": 4,
+      "geography": 4,
+      "science": 0,
+      "sport": 2,
+      "music": 3,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 2,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "general_knowledge",
+    "round_placement": [1, 13, 10, 11, 8]
   }
 ]
