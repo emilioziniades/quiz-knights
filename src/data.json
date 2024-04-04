@@ -1,0 +1,19 @@
+[
+  {
+    "date": "2024-02-22",
+    "category_scores": {
+      "history": 3,
+      "geography": 3,
+      "science": 3,
+      "sport": 1,
+      "music": 3,
+      "art": 4,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 3,
+      "film": 3
+    },
+    "double_up_category": "science",
+    "round_placement": [12, 14, 13, 14, 14]
+  }
+]
