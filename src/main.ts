@@ -15,7 +15,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   </div>
 `;
 
-const ctx = document.querySelector<HTMLCanvasElement>("#averagePerCategory")!;
+const ctx = document.querySelector<HTMLButtonElement>("#averagePerCategory")!;
 
 const averages = labels.map((label: Category) =>
   average(data.map((datum) => datum.category_scores[label])),
