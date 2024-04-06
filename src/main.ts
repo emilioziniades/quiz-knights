@@ -1,5 +1,8 @@
 import "./style.css";
-import { renderAveragePerCategory } from "./charts.ts";
+import {
+  renderAveragePerCategory,
+  renderPlacementAcrossRounds,
+} from "./charts.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -8,10 +11,15 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <h2>Average Score By Category</h2>
       <canvas id="averagePerCategory" class="chart"></canvas>
       <h2>Placement Across Rounds</h2>
+      <canvas id="placementAcrossRounds" class="chart"></canvas>
       <h2>Score Across Rounds</h2>
   </div>
 `;
 
 renderAveragePerCategory(
   document.querySelector<HTMLCanvasElement>("#averagePerCategory")!,
+);
+
+renderPlacementAcrossRounds(
+  document.querySelector<HTMLCanvasElement>("#placementAcrossRounds")!,
 );
