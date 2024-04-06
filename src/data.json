@@ -1,5 +1,39 @@
 [
   {
+    "date": "2024-02-08",
+    "category_scores": {
+      "history": 4,
+      "geography": 3,
+      "science": 4,
+      "sport": 2,
+      "music": 3,
+      "art": 3,
+      "guest": 0,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 1
+    },
+    "double_up_category": "sport",
+    "round_placement": [13, 9, 14, 21, 23]
+  },
+  {
+    "date": "2024-02-15",
+    "category_scores": {
+      "history": 2,
+      "geography": 1,
+      "science": 5,
+      "sport": 3,
+      "music": 4,
+      "art": 3,
+      "guest": 3,
+      "current_affairs": 4,
+      "general_knowledge": 1,
+      "film": 2
+    },
+    "double_up_category": "music",
+    "round_placement": [31, 24, 13, 14, 18]
+  },
+  {
     "date": "2024-02-22",
     "category_scores": {
       "history": 3,
@@ -17,6 +51,57 @@
     "round_placement": [12, 14, 13, 14, 14]
   },
   {
+    "date": "2024-02-29",
+    "category_scores": {
+      "history": 2,
+      "geography": 4,
+      "science": 4,
+      "sport": 5,
+      "music": 4,
+      "art": 2,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 4
+    },
+    "double_up_category": "current_affairs",
+    "round_placement": [15, 15, 13, 11, 9]
+  },
+  {
+    "date": "2024-03-07",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 2,
+      "sport": 2,
+      "music": 3.5,
+      "art": 2,
+      "guest": 0,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 2
+    },
+    "double_up_category": "sport",
+    "round_placement": [6, 9, 13, 16, 18]
+  },
+  {
+    "date": "2024-03-14",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 4,
+      "sport": 5,
+      "music": 3,
+      "art": 1,
+      "guest": 4,
+      "current_affairs": 5,
+      "general_knowledge": 5,
+      "film": 2
+    },
+    "double_up_category": "general_knowledge",
+    "round_placement": [19, 13, 17, 17, 7]
+  },
+  {
     "date": "2024-03-20",
     "category_scores": {
       "history": 4,
@@ -32,5 +117,39 @@
     },
     "double_up_category": "general_knowledge",
     "round_placement": [1, 13, 10, 11, 8]
+  },
+  {
+    "date": "2024-03-28",
+    "category_scores": {
+      "history": 5,
+      "geography": 4,
+      "science": 3,
+      "sport": 2,
+      "music": 3.5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 2,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "general_knowledge",
+    "round_placement": [4, 16, 19, 20, 15]
+  },
+  {
+    "date": "2024-04-04",
+    "category_scores": {
+      "history": 2,
+      "geography": 1,
+      "science": 0.5,
+      "sport": 2,
+      "music": 3.5,
+      "art": 3,
+      "guest": 3,
+      "current_affairs": 2,
+      "general_knowledge": 2,
+      "film": 0
+    },
+    "double_up_category": "history",
+    "round_placement": [14, 17, 16, 19, 20]
   }
 ]
