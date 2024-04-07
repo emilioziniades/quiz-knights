@@ -43,3 +43,11 @@ export const labels: Category[] = [
   "general_knowledge",
   "film",
 ];
+
+export const roundLabels: string[] = [
+  "HIST+GEO",
+  "SCI+SPORT",
+  "MUSIC+ART",
+  "GUEST+CA",
+  "GK+FILM",
+];

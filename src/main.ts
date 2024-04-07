@@ -21,7 +21,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <canvas id="totalPointsOverTime" class="chart"></canvas>
       <h2>Placement Across Rounds</h2>
       <canvas id="placementAcrossRounds" class="chart"></canvas>
-      <h2>Score Across Rounds</h2>
+      <h2>Points Across Rounds</h2>
       <canvas id="pointsAcrossRounds" class="chart"></canvas>
   </div>
 `;

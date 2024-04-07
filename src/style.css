@@ -23,13 +23,15 @@ h1 {
   line-height: 1.1;
 }
 
-.chart {
-  /* max-height: 50vh; */
-}
-
 #app {
   max-width: 1280px;
   margin: 0 auto;
   text-align: center;
-  padding-bottom: 2rem;
+  padding: 0 5rem 3rem 5rem;
+}
+
+@media (max-width: 576px) {
+  #app {
+    padding: 0;
+  }
 }

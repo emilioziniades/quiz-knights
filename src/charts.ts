@@ -1,8 +1,10 @@
-import { Category, Data, labels } from "./types";
-import { average, chunk, colourArray, sum, titleCase } from "./utils";
+import { Category, Data, labels, roundLabels } from "./types";
+import { average, colourArray, sum, titleCase } from "./utils";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { DateTime } from "luxon";
+
+Chart.defaults.color = "#171614";
 
 export function renderAveragePerCategory(
   element: HTMLCanvasElement,
@@ -27,7 +29,6 @@ export function renderAveragePerCategory(
       ],
     },
     options: {
-      responsive: true,
       scales: {
         y: {
           min: 0,
@@ -65,10 +66,6 @@ export function renderPlacementAcrossRounds(
   element: HTMLCanvasElement,
   data: Data,
 ) {
-  const xLabel = chunk(labels, 2).map(
-    (l, i) => `${i + 1}. ` + l.map(titleCase).join(" + "),
-  );
-
   const colours = colourArray(data.length);
 
   const placements = data.map((datum, i) => ({
@@ -81,11 +78,10 @@ export function renderPlacementAcrossRounds(
   new Chart(element, {
     type: "line",
     data: {
-      labels: xLabel,
+      labels: roundLabels,
       datasets: placements,
     },
     options: {
-      responsive: true,
       scales: {
         y: {
           title: {
@@ -103,10 +99,6 @@ export function renderPointsAcrossRounds(
   data: Data,
 ) {
   const colours = colourArray(data.length);
-
-  const xLabel = chunk(labels, 2).map(
-    (l, i) => `${i + 1}. ` + l.map(titleCase).join(" + "),
-  );
 
   const points = data.map((datum, i) => {
     datum.category_scores[datum.double_up_category as Category] *= 2;
@@ -136,11 +128,10 @@ export function renderPointsAcrossRounds(
   new Chart(element, {
     type: "line",
     data: {
-      labels: xLabel,
+      labels: roundLabels,
       datasets: points,
     },
     options: {
-      responsive: true,
       scales: {
         y: {
           title: {
@@ -174,7 +165,6 @@ export function renderTotalPointsOverTime(
       datasets: [{ data: totalPoints }],
     },
     options: {
-      responsive: true,
       scales: {
         y: {
           title: {
@@ -182,12 +172,6 @@ export function renderTotalPointsOverTime(
             text: "Points",
           },
         },
-        // x: {
-        //   title: {
-        //     display: true,
-        //     text: "Date",
-        //   },
-        // },
       },
       plugins: {
         legend: {
