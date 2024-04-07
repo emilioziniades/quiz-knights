@@ -14,7 +14,7 @@ export type Datum = {
   };
 
   double_up_category: Category;
-  round_placement: number[];
+  round_position: number[];
 };
 
 export type Data = Datum[];

@@ -1,8 +1,8 @@
 import "./style.css";
 import {
   renderAveragePerCategory as renderAveragePointsPerCategory,
-  renderPlacementAcrossRounds,
-  renderPlacementOverTime,
+  renderPositionAcrossRounds,
+  renderPositionOverTime,
   renderPointsAcrossRounds,
   renderTotalPointsOverTime,
 } from "./charts.ts";
@@ -20,10 +20,10 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <canvas id="averagePointsPerCategory" class="chart"></canvas>
       <h2>Total Points Over Time</h2>
       <canvas id="totalPointsOverTime" class="chart"></canvas>
-      <h2>Placement Over Time</h2>
-      <canvas id="placementOverTime" class="chart"></canvas>
-      <h2>Placement Across Rounds</h2>
-      <canvas id="placementAcrossRounds" class="chart"></canvas>
+      <h2>Position Over Time</h2>
+      <canvas id="positionOverTime" class="chart"></canvas>
+      <h2>Position Across Rounds</h2>
+      <canvas id="positionAcrossRounds" class="chart"></canvas>
       <h2>Points Across Rounds</h2>
       <canvas id="pointsAcrossRounds" class="chart"></canvas>
   </div>
@@ -51,13 +51,13 @@ renderTotalPointsOverTime(
   structuredClone(data) as Data,
 );
 
-renderPlacementOverTime(
-  document.querySelector<HTMLCanvasElement>("#placementOverTime")!,
+renderPositionOverTime(
+  document.querySelector<HTMLCanvasElement>("#positionOverTime")!,
   structuredClone(data) as Data,
 );
 
-renderPlacementAcrossRounds(
-  document.querySelector<HTMLCanvasElement>("#placementAcrossRounds")!,
+renderPositionAcrossRounds(
+  document.querySelector<HTMLCanvasElement>("#positionAcrossRounds")!,
   structuredClone(data) as Data,
 );
 

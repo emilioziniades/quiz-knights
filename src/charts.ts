@@ -62,15 +62,15 @@ export function renderAveragePerCategory(
   });
 }
 
-export function renderPlacementAcrossRounds(
+export function renderPositionAcrossRounds(
   element: HTMLCanvasElement,
   data: Data,
 ) {
   const colours = colourArray(data.length);
 
-  const placements = data.map((datum, i) => ({
+  const positions = data.map((datum, i) => ({
     label: datum.date,
-    data: datum.round_placement,
+    data: datum.round_position,
     backgroundColor: colours[i].toString(),
     borderColor: colours[i].toString(),
   }));
@@ -79,7 +79,7 @@ export function renderPlacementAcrossRounds(
     type: "line",
     data: {
       labels: roundLabels,
-      datasets: placements,
+      datasets: positions,
     },
     options: {
       scales: {
@@ -197,7 +197,7 @@ export function renderTotalPointsOverTime(
   });
 }
 
-export function renderPlacementOverTime(
+export function renderPositionOverTime(
   element: HTMLCanvasElement,
   data: Data,
 ) {
@@ -206,7 +206,7 @@ export function renderPlacementOverTime(
     .map((date) => DateTime.fromISO(date))
     .map((x) => x.toLocaleString(DateTime.DATE_MED));
 
-  const placements = data.map((x) => x.round_placement.at(-1));
+  const positions = data.map((x) => x.round_position.at(-1));
 
   new Chart(element, {
     type: "line",
@@ -214,7 +214,7 @@ export function renderPlacementOverTime(
       labels: xLabel,
       datasets: [
         {
-          data: placements,
+          data: positions,
           borderColor: colourArray(3)[1].toString(),
         },
       ],
