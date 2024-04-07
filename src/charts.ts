@@ -17,9 +17,8 @@ export function renderAveragePerCategory(element: HTMLCanvasElement) {
       labels: labels.map(titleCase),
       datasets: [
         {
-          label: "Average Score By Category",
+          label: "Average Points Per Category",
           data: averages,
-          // borderColor: colours.map((x) => x.toString()),
           backgroundColor: colours.map((x) => x.toString()),
         },
       ],
@@ -33,6 +32,10 @@ export function renderAveragePerCategory(element: HTMLCanvasElement) {
           ticks: {
             maxTicksLimit: 6,
           },
+          title: {
+            display: true,
+            text: "Points",
+          },
         },
         x: {
           grid: {
@@ -42,9 +45,6 @@ export function renderAveragePerCategory(element: HTMLCanvasElement) {
       },
       plugins: {
         legend: {
-          display: false,
-        },
-        title: {
           display: false,
         },
         datalabels: {
@@ -78,6 +78,14 @@ export function renderPlacementAcrossRounds(element: HTMLCanvasElement) {
     },
     options: {
       responsive: true,
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: "Position",
+          },
+        },
+      },
     },
   });
 }
@@ -120,6 +128,14 @@ export function renderPointsAcrossRounds(element: HTMLCanvasElement) {
     },
     options: {
       responsive: true,
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: "Points",
+          },
+        },
+      },
     },
   });
 }
