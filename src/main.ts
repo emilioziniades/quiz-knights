@@ -1,6 +1,6 @@
 import "./style.css";
 import {
-  renderAveragePerCategory as renderAveragePointsPerCategory,
+  renderAveragePointsPerCategory,
   renderPositionAcrossRounds,
   renderPositionOverTime,
   renderPointsAcrossRounds,

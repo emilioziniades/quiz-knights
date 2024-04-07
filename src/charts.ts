@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 
 Chart.defaults.color = "#171614";
 
-export function renderAveragePerCategory(
+export function renderAveragePointsPerCategory(
   element: HTMLCanvasElement,
   data: Data,
 ) {
@@ -69,7 +69,7 @@ export function renderPositionAcrossRounds(
   const colours = colourArray(data.length);
 
   const positions = data.map((datum, i) => ({
-    label: datum.date,
+    label: DateTime.fromISO(datum.date).toLocaleString(DateTime.DATE_MED),
     data: datum.round_position,
     backgroundColor: colours[i].toString(),
     borderColor: colours[i].toString(),
@@ -89,6 +89,13 @@ export function renderPositionAcrossRounds(
           title: {
             display: true,
             text: "Position",
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          labels: {
+            usePointStyle: true,
           },
         },
       },
@@ -120,7 +127,7 @@ export function renderPointsAcrossRounds(
     }, [] as number[]);
 
     return {
-      label: datum.date,
+      label: DateTime.fromISO(datum.date).toLocaleString(DateTime.DATE_MED),
       data: accumulatedPoints,
       backgroundColor: colours[i].toString(),
       borderColor: colours[i].toString(),
@@ -139,6 +146,13 @@ export function renderPointsAcrossRounds(
           title: {
             display: true,
             text: "Points",
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          labels: {
+            usePointStyle: true,
           },
         },
       },
@@ -197,10 +211,7 @@ export function renderTotalPointsOverTime(
   });
 }
 
-export function renderPositionOverTime(
-  element: HTMLCanvasElement,
-  data: Data,
-) {
+export function renderPositionOverTime(element: HTMLCanvasElement, data: Data) {
   const xLabel = data
     .map((datum) => datum.date)
     .map((date) => DateTime.fromISO(date))
