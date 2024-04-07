@@ -29,20 +29,20 @@ document.querySelector<HTMLImageElement>("#roundTable")!.src = roundTable;
 
 renderAveragePointsPerCategory(
   document.querySelector<HTMLCanvasElement>("#averagePointsPerCategory")!,
-  [...(data as Data)],
+  structuredClone(data) as Data,
 );
 
 renderTotalPointsOverTime(
   document.querySelector<HTMLCanvasElement>("#totalPointsOverTime")!,
-  [...(data as Data)],
+  structuredClone(data) as Data,
 );
 
 renderPlacementAcrossRounds(
   document.querySelector<HTMLCanvasElement>("#placementAcrossRounds")!,
-  [...(data as Data)],
+  structuredClone(data) as Data,
 );
 
 renderPointsAcrossRounds(
   document.querySelector<HTMLCanvasElement>("#pointsAcrossRounds")!,
-  [...(data as Data)],
+  structuredClone(data) as Data,
 );
