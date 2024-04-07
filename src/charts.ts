@@ -1,10 +1,14 @@
-import { Category, labels } from "./types";
-import data from "./data.json";
-import { average, chunk, colourArray, titleCase } from "./utils";
+import { Category, Data, labels } from "./types";
+// import data from "./data.json";
+import { average, chunk, colourArray, sum, titleCase } from "./utils";
 import Chart from "chart.js/auto";
+import "chartjs-adapter-luxon";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-export function renderAveragePerCategory(element: HTMLCanvasElement) {
+export function renderAveragePerCategory(
+  element: HTMLCanvasElement,
+  data: Data,
+) {
   const averages = labels.map((label: Category) =>
     average(data.map((datum) => datum.category_scores[label])),
   );
@@ -58,7 +62,10 @@ export function renderAveragePerCategory(element: HTMLCanvasElement) {
   });
 }
 
-export function renderPlacementAcrossRounds(element: HTMLCanvasElement) {
+export function renderPlacementAcrossRounds(
+  element: HTMLCanvasElement,
+  data: Data,
+) {
   const xLabel = chunk(labels, 2).map((l) => l.map(titleCase).join(" + "));
 
   const colours = colourArray(data.length);
@@ -90,7 +97,10 @@ export function renderPlacementAcrossRounds(element: HTMLCanvasElement) {
   });
 }
 
-export function renderPointsAcrossRounds(element: HTMLCanvasElement) {
+export function renderPointsAcrossRounds(
+  element: HTMLCanvasElement,
+  data: Data,
+) {
   const colours = colourArray(data.length);
 
   const xLabel = chunk(labels, 2).map((l) => l.map(titleCase).join(" + "));
@@ -137,5 +147,53 @@ export function renderPointsAcrossRounds(element: HTMLCanvasElement) {
         },
       },
     },
+  });
+}
+
+export function renderTotalPointsOverTime(
+  element: HTMLCanvasElement,
+  data: Data,
+) {
+  const totalPoints = data.map((datum) => {
+    datum.category_scores[datum.double_up_category as Category] *= 2;
+    return sum(Object.values(datum.category_scores));
+  });
+
+  new Chart(element, {
+    type: "line",
+    data: {
+      labels: data.map((x) => x.date),
+      datasets: [{ data: totalPoints }],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: "Points",
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: "Date",
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        datalabels: {
+          anchor: "end",
+          align: "bottom",
+          padding: {
+            top: 10,
+          },
+        },
+      },
+    },
+    plugins: [ChartDataLabels],
   });
 }
