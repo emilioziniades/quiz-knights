@@ -4,10 +4,12 @@ import {
   renderPlacementAcrossRounds,
   renderPointsAcrossRounds,
 } from "./charts.ts";
+import roundTable from "./roundTable.png";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
       <h1>The Quiz Knights</h1>
+      <img id="roundTable" alt="The Round Table"/>
       <p>How did we do?</p>
       <h2>Average Points Per Category</h2>
       <canvas id="averagePointsPerCategory" class="chart"></canvas>
@@ -17,6 +19,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <canvas id="pointsAcrossRounds" class="chart"></canvas>
   </div>
 `;
+
+document.querySelector<HTMLImageElement>("#roundTable")!.src = roundTable;
 
 renderAveragePointsPerCategory(
   document.querySelector<HTMLCanvasElement>("#averagePointsPerCategory")!,
