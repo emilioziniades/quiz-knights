@@ -2,6 +2,7 @@ import "./style.css";
 import {
   renderAveragePerCategory,
   renderPlacementAcrossRounds,
+  renderPointsAcrossRounds,
 } from "./charts.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
@@ -13,6 +14,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <h2>Placement Across Rounds</h2>
       <canvas id="placementAcrossRounds" class="chart"></canvas>
       <h2>Score Across Rounds</h2>
+      <canvas id="pointsAcrossRounds" class="chart"></canvas>
   </div>
 `;
 
@@ -22,4 +24,8 @@ renderAveragePerCategory(
 
 renderPlacementAcrossRounds(
   document.querySelector<HTMLCanvasElement>("#placementAcrossRounds")!,
+);
+
+renderPointsAcrossRounds(
+  document.querySelector<HTMLCanvasElement>("#pointsAcrossRounds")!,
 );

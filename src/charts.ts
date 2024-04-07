@@ -1,12 +1,8 @@
 import { Category, labels } from "./types";
 import data from "./data.json";
-import { average, colourArray, titleCase } from "./utils";
+import { average, chunk, colourArray, titleCase } from "./utils";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-
-const cornsilk = "#FEFAE0";
-
-Chart.defaults.color = cornsilk;
 
 export function renderAveragePerCategory(element: HTMLCanvasElement) {
   const averages = labels.map((label: Category) =>
@@ -23,11 +19,8 @@ export function renderAveragePerCategory(element: HTMLCanvasElement) {
         {
           label: "Average Score By Category",
           data: averages,
-          borderColor: colours.map((x) => x.toString()),
-          backgroundColor: colours.map((x) => {
-            x.alpha = 0.8;
-            return x.toString();
-          }),
+          // borderColor: colours.map((x) => x.toString()),
+          backgroundColor: colours.map((x) => x.toString()),
         },
       ],
     },
@@ -35,23 +28,13 @@ export function renderAveragePerCategory(element: HTMLCanvasElement) {
       responsive: true,
       scales: {
         y: {
-          border: {
-            color: cornsilk,
-          },
           min: 0,
           max: 5,
-          grid: {
-            display: true,
-            color: cornsilk,
-          },
           ticks: {
             maxTicksLimit: 6,
           },
         },
         x: {
-          border: {
-            color: cornsilk,
-          },
           grid: {
             display: false,
           },
@@ -76,6 +59,8 @@ export function renderAveragePerCategory(element: HTMLCanvasElement) {
 }
 
 export function renderPlacementAcrossRounds(element: HTMLCanvasElement) {
+  const xLabel = chunk(labels, 2).map((l) => l.map(titleCase).join(" + "));
+
   const colours = colourArray(data.length);
 
   const placements = data.map((datum, i) => ({
@@ -88,14 +73,50 @@ export function renderPlacementAcrossRounds(element: HTMLCanvasElement) {
   new Chart(element, {
     type: "line",
     data: {
-      labels: [
-        labels[0] + " + " + labels[1],
-        labels[2] + " + " + labels[3],
-        labels[4] + " + " + labels[5],
-        labels[6] + " + " + labels[7],
-        labels[8] + " + " + labels[9],
-      ].map(titleCase),
+      labels: xLabel,
       datasets: placements,
+    },
+    options: {
+      responsive: true,
+    },
+  });
+}
+
+export function renderPointsAcrossRounds(element: HTMLCanvasElement) {
+  const colours = colourArray(data.length);
+
+  const xLabel = chunk(labels, 2).map((l) => l.map(titleCase).join(" + "));
+
+  const points = data.map((datum, i) => {
+    datum.category_scores[datum.double_up_category as Category] *= 2;
+
+    const pointsPerRound = [
+      datum.category_scores.history + datum.category_scores.geography,
+      datum.category_scores.science + datum.category_scores.sport,
+      datum.category_scores.music + datum.category_scores.art,
+      datum.category_scores.guest + datum.category_scores.current_affairs,
+      datum.category_scores.general_knowledge + datum.category_scores.film,
+    ];
+
+    const accumulatedPoints: number[] = pointsPerRound.reduce((a, n) => {
+      const last = a.at(-1) ?? 0;
+      a.push(last + n);
+      return a;
+    }, [] as number[]);
+
+    return {
+      label: datum.date,
+      data: accumulatedPoints,
+      backgroundColor: colours[i].toString(),
+      borderColor: colours[i].toString(),
+    };
+  });
+
+  new Chart(element, {
+    type: "line",
+    data: {
+      labels: xLabel,
+      datasets: points,
     },
     options: {
       responsive: true,
