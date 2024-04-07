@@ -2,6 +2,7 @@ import "./style.css";
 import {
   renderAveragePerCategory as renderAveragePointsPerCategory,
   renderPlacementAcrossRounds,
+  renderPlacementOverTime,
   renderPointsAcrossRounds,
   renderTotalPointsOverTime,
 } from "./charts.ts";
@@ -19,6 +20,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <canvas id="averagePointsPerCategory" class="chart"></canvas>
       <h2>Total Points Over Time</h2>
       <canvas id="totalPointsOverTime" class="chart"></canvas>
+      <h2>Placement Over Time</h2>
+      <canvas id="placementOverTime" class="chart"></canvas>
       <h2>Placement Across Rounds</h2>
       <canvas id="placementAcrossRounds" class="chart"></canvas>
       <h2>Points Across Rounds</h2>
@@ -45,6 +48,11 @@ renderAveragePointsPerCategory(
 
 renderTotalPointsOverTime(
   document.querySelector<HTMLCanvasElement>("#totalPointsOverTime")!,
+  structuredClone(data) as Data,
+);
+
+renderPlacementOverTime(
+  document.querySelector<HTMLCanvasElement>("#placementOverTime")!,
   structuredClone(data) as Data,
 );
 

@@ -84,6 +84,8 @@ export function renderPlacementAcrossRounds(
     options: {
       scales: {
         y: {
+          reverse: true,
+          min: 1,
           title: {
             display: true,
             text: "Position",
@@ -162,7 +164,12 @@ export function renderTotalPointsOverTime(
     type: "line",
     data: {
       labels: xLabel,
-      datasets: [{ data: totalPoints }],
+      datasets: [
+        {
+          data: totalPoints,
+          borderColor: colourArray(3)[0].toString(),
+        },
+      ],
     },
     options: {
       scales: {
@@ -170,6 +177,56 @@ export function renderTotalPointsOverTime(
           title: {
             display: true,
             text: "Points",
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        datalabels: {
+          anchor: "end",
+          align: "bottom",
+          padding: {
+            top: 10,
+          },
+        },
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
+}
+
+export function renderPlacementOverTime(
+  element: HTMLCanvasElement,
+  data: Data,
+) {
+  const xLabel = data
+    .map((datum) => datum.date)
+    .map((date) => DateTime.fromISO(date))
+    .map((x) => x.toLocaleString(DateTime.DATE_MED));
+
+  const placements = data.map((x) => x.round_placement.at(-1));
+
+  new Chart(element, {
+    type: "line",
+    data: {
+      labels: xLabel,
+      datasets: [
+        {
+          data: placements,
+          borderColor: colourArray(3)[1].toString(),
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          reverse: true,
+          min: 1,
+          title: {
+            display: true,
+            text: "Position",
           },
         },
       },
