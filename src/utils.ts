@@ -15,7 +15,7 @@ export function sum(array: number[]): number {
 }
 
 export function colourArray(steps: number): Color[] {
-  const cStart = "fuchsia";
+  const cStart = "hotpink";
   const cEnd = "gold";
   return new Color(cStart).steps(cEnd, {
     space: "lch",

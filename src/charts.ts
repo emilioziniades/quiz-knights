@@ -1,9 +1,8 @@
 import { Category, Data, labels } from "./types";
-// import data from "./data.json";
 import { average, chunk, colourArray, sum, titleCase } from "./utils";
 import Chart from "chart.js/auto";
-import "chartjs-adapter-luxon";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { DateTime } from "luxon";
 
 export function renderAveragePerCategory(
   element: HTMLCanvasElement,
@@ -66,7 +65,9 @@ export function renderPlacementAcrossRounds(
   element: HTMLCanvasElement,
   data: Data,
 ) {
-  const xLabel = chunk(labels, 2).map((l) => l.map(titleCase).join(" + "));
+  const xLabel = chunk(labels, 2).map(
+    (l, i) => `${i + 1}. ` + l.map(titleCase).join(" + "),
+  );
 
   const colours = colourArray(data.length);
 
@@ -103,7 +104,9 @@ export function renderPointsAcrossRounds(
 ) {
   const colours = colourArray(data.length);
 
-  const xLabel = chunk(labels, 2).map((l) => l.map(titleCase).join(" + "));
+  const xLabel = chunk(labels, 2).map(
+    (l, i) => `${i + 1}. ` + l.map(titleCase).join(" + "),
+  );
 
   const points = data.map((datum, i) => {
     datum.category_scores[datum.double_up_category as Category] *= 2;
@@ -154,6 +157,11 @@ export function renderTotalPointsOverTime(
   element: HTMLCanvasElement,
   data: Data,
 ) {
+  const xLabel = data
+    .map((datum) => datum.date)
+    .map((date) => DateTime.fromISO(date))
+    .map((x) => x.toLocaleString(DateTime.DATE_MED));
+
   const totalPoints = data.map((datum) => {
     datum.category_scores[datum.double_up_category as Category] *= 2;
     return sum(Object.values(datum.category_scores));
@@ -162,7 +170,7 @@ export function renderTotalPointsOverTime(
   new Chart(element, {
     type: "line",
     data: {
-      labels: data.map((x) => x.date),
+      labels: xLabel,
       datasets: [{ data: totalPoints }],
     },
     options: {
@@ -174,12 +182,12 @@ export function renderTotalPointsOverTime(
             text: "Points",
           },
         },
-        x: {
-          title: {
-            display: true,
-            text: "Date",
-          },
-        },
+        // x: {
+        //   title: {
+        //     display: true,
+        //     text: "Date",
+        //   },
+        // },
       },
       plugins: {
         legend: {
