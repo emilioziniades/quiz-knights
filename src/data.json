@@ -151,5 +151,22 @@
     },
     "double_up_category": "history",
     "round_position": [14, 17, 16, 19, 20]
+  },
+  {
+    "date": "2024-04-11",
+    "category_scores": {
+      "history": 3,
+      "geography": 3,
+      "science": 0,
+      "sport": 3,
+      "music": 4,
+      "art": 2,
+      "guest": 3,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 3
+    },
+    "double_up_category": "music",
+    "round_position": [15, 19, 18, 17, 16]
   }
 ]
