@@ -6,4 +6,4 @@ An incredibly simple single page site with the purpose of displaying statistics 
 
 The data is stored in `src/data.json`, because who has time for databases?
 
-To get a development server going, install NodeJS 21 (or just do `nix develop`) and run `npm run dev`
+To get a development server going, install Node.js 21 (or just do `nix develop`) and run `npm run dev`
