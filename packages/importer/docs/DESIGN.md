@@ -38,6 +38,8 @@ Review each scoresheet and enter its quiz date, category scores, double-up categ
 
 Persist edits in SQLite as work progresses. **Save** commits complete recordings in SQLite, leaves unfinished drafts for later review, and regenerates `packages/data/data.json` from the approved database records. Notes remain only in SQLite. Write the JSON file atomically so the website never sees a partial export. If exporting fails, show the error and allow **Save** to be retried without losing the database changes.
 
+If a result already exists for the quiz date, accept an identical recording and link an unlinked result to its scoresheet. Reject a recording with different scores, double-up category, or round positions.
+
 ## Local data and identity
 
 The local SQLite database stores imported transcript entries, attachment bytes and metadata, ZIP import history, classifications, notes, draft recordings, processing responses if automation is added, and approved results. The original ZIP is not needed after a successful import. Keep the database local; it is not part of the Netlify deployment.
@@ -56,6 +58,5 @@ Use the SHA-256 hash of an image's contents to recognize it across ZIPs. Keep it
 - How should score sheets with missing or ambiguous chat timestamps be ordered?
 - How should duplicate image attachments with the same hash appear in the review list?
 - How should overlapping exports identify the same text message if the transcript format provides no stable message ID?
-- When saving results, how should the app handle a quiz date that already has an approved database result?
 - Where should the local SQLite file live, and how should it be backed up?
 - Should results posted only as chat text be imported? One possible starting heuristic is to look for messages containing several quiz category names, then review matches manually.

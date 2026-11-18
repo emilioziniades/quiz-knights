@@ -245,9 +245,19 @@ export function openStore(databasePath, exportPath) {
 
       withTransaction(db, () => {
         for (const { sheetId, record } of ready) {
-          const other = db.prepare("SELECT sheet_id FROM results WHERE date = ?").get(record.date)
+          const other = db.prepare("SELECT sheet_id, payload FROM results WHERE date = ?").get(record.date)
           if (other && other.sheet_id !== sheetId) {
-            throw new Error(`A result for ${record.date} already exists`)
+            const existing = validateRecord(JSON.parse(other.payload))
+            if (JSON.stringify(existing) !== JSON.stringify(record)) {
+              throw new Error(`A different result for ${record.date} already exists`)
+            }
+            db.prepare("DELETE FROM results WHERE sheet_id = ? AND date <> ?")
+              .run(sheetId, record.date)
+            if (other.sheet_id === null) {
+              db.prepare("UPDATE results SET sheet_id = ? WHERE date = ?")
+                .run(sheetId, record.date)
+            }
+            continue
           }
           db.prepare("DELETE FROM results WHERE sheet_id = ? AND date <> ?")
             .run(sheetId, record.date)

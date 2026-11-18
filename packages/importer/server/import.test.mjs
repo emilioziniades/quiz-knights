@@ -107,20 +107,33 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
   }
 })
 
-test("rejects a conflicting result without changing published data", () => {
+test("accepts an identical result for a date but rejects different values", () => {
   const directory = mkdtempSync(join(tmpdir(), "quiz-knights-importer-"))
   const exportPath = join(directory, "data.json")
   writeFileSync(exportPath, JSON.stringify([record("2024-02-01")]))
   const store = openStore(join(directory, "importer.sqlite"), exportPath)
   try {
-    const image = strToU8("image")
-    importArchive(store, zipSync({ "IMG.jpg": image }), "chat.zip")
-    const hash = imageHash(image)
-    store.setClassification(hash, "scoresheet")
-    store.setDraft(hash, record("2024-02-01"))
-    assert.throws(() => store.save(), /already exists/)
+    const firstImage = strToU8("first-image")
+    const secondImage = strToU8("second-image")
+    importArchive(store, zipSync({ "IMG-1.jpg": firstImage, "IMG-2.jpg": secondImage }), "chat.zip")
+    const firstHash = imageHash(firstImage)
+    const secondHash = imageHash(secondImage)
+    store.setClassification(firstHash, "scoresheet")
+    store.setDraft(firstHash, record("2024-02-01"))
+    assert.deepEqual(store.save(), { results: 1 })
+    assert.equal(store.listImages().find((image) => image.hash === firstHash).saved_date, "2024-02-01")
+
+    store.setClassification(secondHash, "scoresheet")
+    store.setDraft(secondHash, record("2024-02-01"))
+    assert.deepEqual(store.save(), { results: 1 })
+    assert.equal(store.listImages().find((image) => image.hash === firstHash).saved_date, "2024-02-01")
+
+    store.setDraft(secondHash, {
+      ...record("2024-02-01"), category_scores: { ...scores, history: 4 },
+    })
+    assert.throws(() => store.save(), /different result.*already exists/)
     assert.equal(store.counts().results, 1)
-    assert.equal(JSON.parse(readFileSync(exportPath, "utf8")).length, 1)
+    assert.deepEqual(JSON.parse(readFileSync(exportPath, "utf8")), [record("2024-02-01")])
   } finally {
     store.close()
     rmSync(directory, { recursive: true, force: true })
