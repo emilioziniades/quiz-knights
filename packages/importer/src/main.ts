@@ -13,6 +13,7 @@ type Image = {
   classification: "complete" | "incomplete" | "other" | null
   timestamp_ms: number | null
   draft: Draft | null
+  notes: string
   saved_date: string | null
 }
 type State = {
@@ -33,6 +34,7 @@ let selectedHash: string | null = null
 let imageFilter: ImageFilter = "needs-review"
 let filenameQuery = ""
 let draftTimer: number | undefined
+let notesTimer: number | undefined
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options)
@@ -104,7 +106,8 @@ function matchesFilename(name: string, query: string) {
 
 async function setImageFilter(filter: ImageFilter) {
   window.clearTimeout(draftTimer)
-  try { await persistDraft() } catch (error) { status((error as Error).message, true); return }
+  window.clearTimeout(notesTimer)
+  try { await persistEdits() } catch (error) { status((error as Error).message, true); return }
   imageFilter = filter
   selectedHash = visibleImages()[0]?.hash || null
   render()
@@ -147,9 +150,28 @@ async function persistDraft() {
   status("Draft saved locally")
 }
 
+async function persistNotes() {
+  const field = document.querySelector<HTMLTextAreaElement>("#sheet-notes")
+  if (!selectedHash || !field) return
+  const notes = field.value
+  const image = state.images.find((item) => item.hash === selectedHash)
+  if (image?.notes === notes) return
+  await api(`/api/images/${selectedHash}/notes`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notes }),
+  })
+  if (image) image.notes = notes
+  status("Notes saved locally")
+}
+
+async function persistEdits() {
+  await persistDraft()
+  await persistNotes()
+}
+
 async function selectImage(hash: string) {
   window.clearTimeout(draftTimer)
-  try { await persistDraft() } catch (error) { status((error as Error).message, true); return }
+  window.clearTimeout(notesTimer)
+  try { await persistEdits() } catch (error) { status((error as Error).message, true); return }
   selectedHash = hash
   render()
 }
@@ -160,7 +182,8 @@ async function classify(value: "complete" | "incomplete" | "other") {
   const next = visible[visible.findIndex((item) => item.hash === selectedHash) + 1]?.hash
   try {
     window.clearTimeout(draftTimer)
-    await persistDraft()
+    window.clearTimeout(notesTimer)
+    await persistEdits()
     await api(`/api/images/${selectedHash}/classification`, {
       method: "PUT", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ classification: value }),
@@ -176,6 +199,9 @@ async function importZip(event: Event) {
   if (!file) return
   status(`Importing ${file.name}…`)
   try {
+    window.clearTimeout(draftTimer)
+    window.clearTimeout(notesTimer)
+    await persistEdits()
     const result = await api<{ skipped: boolean; images: number; newImages: number }>(
       `/api/import?filename=${encodeURIComponent(file.name)}`,
       { method: "POST", body: file },
@@ -190,7 +216,8 @@ async function importZip(event: Event) {
 async function save() {
   try {
     window.clearTimeout(draftTimer)
-    await persistDraft()
+    window.clearTimeout(notesTimer)
+    await persistEdits()
     const result = await api<{ results: number }>("/api/save", { method: "POST" })
     await refresh(selectedHash)
     status(`Saved ${result.results} results to SQLite and packages/data`)
@@ -272,6 +299,24 @@ function render() {
       const note = document.createElement("p")
       note.textContent = "Grouping incomplete images is the next implementation step."
       editor.append(note)
+    }
+    if (selected.classification === "complete" || selected.classification === "incomplete") {
+      const section = document.createElement("section")
+      section.className = "notes-section"
+      const label = document.createElement("label")
+      label.textContent = "Notes"
+      const field = document.createElement("textarea")
+      field.id = "sheet-notes"
+      field.rows = 5
+      field.value = selected.notes || ""
+      field.placeholder = "Context, missing details, or other observations"
+      field.addEventListener("input", () => {
+        window.clearTimeout(notesTimer)
+        notesTimer = window.setTimeout(() => persistNotes().catch((error) => status(error.message, true)), 500)
+      })
+      label.append(field)
+      section.append(label)
+      editor.append(section)
     }
   }
   app.querySelector<HTMLInputElement>("#zip")!.addEventListener("change", importZip)

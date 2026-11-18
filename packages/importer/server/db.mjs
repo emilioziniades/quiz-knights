@@ -46,6 +46,10 @@ const schema = `
     payload TEXT NOT NULL,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE IF NOT EXISTS image_notes (
+    image_hash TEXT PRIMARY KEY REFERENCES images(hash),
+    notes TEXT NOT NULL
+  );
   CREATE TABLE IF NOT EXISTS results (
     date TEXT PRIMARY KEY,
     sheet_id TEXT UNIQUE REFERENCES images(hash),
@@ -129,10 +133,12 @@ export function openStore(databasePath, exportPath) {
                 ORDER BY timestamp_ms IS NULL, timestamp_ms, import_id, archive_path
                 LIMIT 1) AS filename,
                d.payload AS draft,
+               COALESCE(n.notes, '') AS notes,
                r.date AS saved_date
         FROM images i
         LEFT JOIN image_occurrences o ON o.image_hash = i.hash
         LEFT JOIN drafts d ON d.sheet_id = i.hash
+        LEFT JOIN image_notes n ON n.image_hash = i.hash
         LEFT JOIN results r ON r.sheet_id = i.hash
         GROUP BY i.hash
         ORDER BY timestamp_ms IS NULL, timestamp_ms, i.hash
@@ -175,6 +181,16 @@ export function openStore(databasePath, exportPath) {
         ON CONFLICT(sheet_id) DO UPDATE SET payload = excluded.payload,
           updated_at = CURRENT_TIMESTAMP
       `).run(hash, JSON.stringify(payload))
+    },
+    setNotes(hash, notes) {
+      if (typeof notes !== "string") throw new Error("Notes must be text")
+      if (!db.prepare("SELECT 1 FROM images WHERE hash = ?").get(hash)) {
+        throw new Error("Image not found")
+      }
+      db.prepare(`
+        INSERT INTO image_notes (image_hash, notes) VALUES (?, ?)
+        ON CONFLICT(image_hash) DO UPDATE SET notes = excluded.notes
+      `).run(hash, notes)
     },
     save() {
       const drafts = db.prepare(`

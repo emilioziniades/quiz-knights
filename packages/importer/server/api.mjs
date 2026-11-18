@@ -71,6 +71,11 @@ export function createApi() {
         store.setDraft(draft[1], await readJson(request))
         return json(response, 200, { ok: true })
       }
+      const notes = path.match(/^\/images\/([a-f0-9]{64})\/notes$/)
+      if (method === "PUT" && notes) {
+        store.setNotes(notes[1], (await readJson(request)).notes)
+        return json(response, 200, { ok: true })
+      }
       if (method === "POST" && path === "/save") {
         return json(response, 200, store.save())
       }

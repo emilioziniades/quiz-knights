@@ -64,9 +64,11 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
     const hash = imageHash(firstImage)
     store.setClassification(hash, "complete")
     store.setDraft(hash, record("2024-02-08"))
+    store.setNotes(hash, "12th place out of 30, confirmed in chat")
     assert.deepEqual(store.save(), { results: 2 })
-    assert.deepEqual(JSON.parse(readFileSync(exportPath, "utf8")).map((item) => item.date),
-      ["2024-02-01", "2024-02-08"])
+    const published = JSON.parse(readFileSync(exportPath, "utf8"))
+    assert.deepEqual(published.map((item) => item.date), ["2024-02-01", "2024-02-08"])
+    assert.equal(published[1].notes, undefined)
     store.close()
 
     store = openStore(databasePath, exportPath)
@@ -81,6 +83,20 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
     assert.equal(store.db.prepare("SELECT COUNT(*) AS count FROM image_occurrences WHERE image_hash = ?")
       .get(hash).count, 2)
     assert.equal(store.listImages().find((image) => image.hash === hash).saved_date, "2024-02-08")
+    assert.equal(store.listImages().find((image) => image.hash === hash).notes,
+      "12th place out of 30, confirmed in chat")
+    const secondHash = imageHash(secondImage)
+    store.setClassification(secondHash, "incomplete")
+    store.setNotes(secondHash, "Only one corner of the sheet is visible")
+    assert.equal(store.listImages().find((image) => image.hash === secondHash).notes,
+      "Only one corner of the sheet is visible")
+    assert.deepEqual(store.save(), { results: 2 })
+    assert.equal(JSON.parse(readFileSync(exportPath, "utf8")).length, 2)
+    store.setNotes(hash, "Updated after reviewing the chat")
+    store.save()
+    assert.equal(store.listImages().find((image) => image.hash === hash).notes,
+      "Updated after reviewing the chat")
+    assert.equal(JSON.parse(readFileSync(exportPath, "utf8"))[1].notes, undefined)
     store.close()
   } finally {
     rmSync(directory, { recursive: true, force: true })
