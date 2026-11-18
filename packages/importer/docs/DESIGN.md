@@ -2,13 +2,17 @@
 
 ## Purpose
 
-Build a local web app to record Quiz Knights results from an exported WhatsApp chat. It is a personal tool: clear review and reliable saving matter more than visual polish or support for other people's machines.
+Build a local web app to record Quiz Knights results from exported WhatsApp chats. It is a personal tool: clear review and reliable saving matter more than visual polish or support for other people's machines.
+
+A local SQLite database is the source of truth. Opening the app should show previously imported images, decisions, and results without requiring a ZIP file.
 
 This document describes the intended workflow. The current importer app is only a Hello World starter.
 
 ## Input
 
-The input is a WhatsApp chat export ZIP containing images and a message transcript. The app should offer an **Import chat history ZIP** button. A local launcher that accepts the ZIP path as a command-line argument would also be useful. Both entry points should open the same review workflow.
+Each new input is a WhatsApp chat export ZIP containing images and a message transcript. The app should offer an **Import chat history ZIP** button. A local launcher that accepts the ZIP path as a command-line argument would also be useful. Both entry points should add to the same database and open the same review workflow.
+
+Importing another ZIP must merge new content with the existing database. An exact repeat of a successfully imported ZIP can be skipped using its SHA-256 hash. For an overlapping export, inspect the archive, reuse known images by content hash, and preserve existing classifications, groups, recordings, and manual edits. The default review list should show new or unfinished items, with filters to revisit older ones.
 
 Show images in chat order, oldest first, using the transcript timestamps where available.
 
@@ -26,7 +30,7 @@ Show one image at a time and assign one of three classifications:
 | Incomplete score sheet | This image needs one or more other images to make a complete result. |
 | Other | The image is irrelevant to score recording. |
 
-After a classification, advance to the next image. Keep **Other** images out of grouping and recording, while retaining their decisions in the local draft.
+After a classification, advance to the next image. Keep **Other** images out of grouping and recording, while retaining their decisions in SQLite.
 
 ### 2. Group incomplete score sheets
 
@@ -36,26 +40,32 @@ A group is one level deep: it contains images, not other groups. Changing group 
 
 ### 3. Record and save results
 
-Review each complete score sheet, whether it is a single image or a group, and enter its quiz date, category scores, double-up category, and five round positions. These are the fields currently stored in `packages/data/data.json`.
+Review each complete score sheet, whether it is a single image or a group, and enter its quiz date, category scores, double-up category, and five round positions. These are the fields currently represented in `packages/data/data.json`.
 
-Save edits to the local draft as work progresses. Once classifications, groups, and recordings are satisfactory, **Save results** writes the reviewed records to `packages/data/data.json`.
+Persist edits in SQLite as work progresses. Once classifications, groups, and recordings are satisfactory, **Save** commits the reviewed results in SQLite and regenerates `packages/data/data.json` from the approved database records. Write the JSON file atomically so the website never sees a partial export. If exporting fails, show the error and allow **Save** to be retried without losing the database changes.
 
-## Draft data
+## Local data and identity
 
-Persist decisions locally in JSON so a session can be resumed. Key each image's classification by the SHA-256 hash of its contents. Store grouping and recorded fields in the same draft, separate from the published results file. Key a single-image recording by its image hash and a grouped recording by its group hash.
+The local SQLite database stores imported transcript entries, attachment bytes and metadata, ZIP import history, classifications, groups, draft recordings, processing responses if automation is added, and approved results. The original ZIP is not needed after a successful import. Keep the database local; it is not part of the Netlify deployment.
+
+Use the SHA-256 hash of an image's contents to recognize it across ZIPs. Keep its occurrences in chat separate so repeated attachments can retain their dates and message context. Key a single-image recording by its image hash and a grouped recording by its group hash. Reusing an image must not trigger another classification or overwrite a manual decision; reprocessing should require an explicit action.
 
 For a grouped score sheet, sort its member image hashes, concatenate them, and SHA-256 hash the result. This gives the group the same identity regardless of the order in which its images were selected.
+
+`packages/data/data.json` will become a generated snapshot for the static web app. SQLite remains authoritative; the website does not read the local database directly.
 
 ## Interface proposal
 
 - **Categorize:** Image list on the left, selected image in the main area, and the three classification actions nearby. Classification advances to the next image. Filters on the list can show the union of selected classifications.
 - **Group:** Show incomplete images and their groups. Dragging images together could create or extend a group; dragging one out could split it. If removing an image leaves a group with one member, return that member to the ungrouped list.
-- **Record:** Score-sheet list on the left, image or grouped images in the center, and editable result fields on the right. Put **Save results** at the bottom right.
+- **Record:** Score-sheet list on the left, image or grouped images in the center, and editable result fields on the right. Put **Save** at the bottom right.
 
 ## Open questions
 
 - Is drag-and-drop grouping worth the complexity, or would selecting images and clicking **Group** be clearer?
 - How should score sheets with missing or ambiguous chat timestamps be ordered?
 - How should duplicate image attachments with the same hash appear in the review list?
-- When saving results, how should the app handle a quiz date that is already in the published data?
+- How should overlapping exports identify the same text message if the transcript format provides no stable message ID?
+- When saving results, how should the app handle a quiz date that already has an approved database result?
+- Where should the local SQLite file live, and how should it be backed up?
 - Should results posted only as chat text be imported? One possible starting heuristic is to look for messages containing several quiz category names, then review matches manually.
