@@ -31,6 +31,7 @@ const app = document.querySelector<HTMLDivElement>("#app")!
 let state: State = { imports: 0, images: [], results: 0, lastImport: null }
 let selectedHash: string | null = null
 let imageFilter: ImageFilter = "needs-review"
+let filenameQuery = ""
 let draftTimer: number | undefined
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
@@ -59,7 +60,46 @@ function matchesFilter(image: Image, filter: ImageFilter) {
 }
 
 function visibleImages() {
-  return state.images.filter((image) => matchesFilter(image, imageFilter))
+  return state.images.filter((image) => matchesFilter(image, imageFilter) && matchesFilename(image.filename, filenameQuery))
+}
+
+function filename(name: string) {
+  return name.split(/[\\/]/).at(-1) || name
+}
+
+function withinEdits(query: string, candidate: string, limit: number) {
+  if (Math.abs(query.length - candidate.length) > limit) return false
+  let previous = Array.from({ length: candidate.length + 1 }, (_, index) => index)
+  for (let row = 1; row <= query.length; row++) {
+    const current = [row]
+    for (let column = 1; column <= candidate.length; column++) {
+      current[column] = Math.min(
+        previous[column] + 1,
+        current[column - 1] + 1,
+        previous[column - 1] + (query[row - 1] === candidate[column - 1] ? 0 : 1),
+      )
+    }
+    previous = current
+  }
+  return previous[candidate.length] <= limit
+}
+
+function matchesFilename(name: string, query: string) {
+  const normalized = filename(name).toLowerCase()
+  const parts = normalized.split(/[^a-z0-9]+/).filter(Boolean)
+  return query.toLowerCase().trim().split(/\s+/).every((term) => {
+    if (normalized.includes(term)) return true
+    if (term.length < 4) return false
+    const limit = term.length >= 8 ? 2 : 1
+    return parts.some((part) => {
+      for (let start = 0; start < part.length; start++) {
+        for (let length = Math.max(1, term.length - limit); length <= term.length + limit; length++) {
+          if (withinEdits(term, part.slice(start, start + length), limit)) return true
+        }
+      }
+      return false
+    })
+  })
 }
 
 async function setImageFilter(filter: ImageFilter) {
@@ -158,7 +198,6 @@ async function save() {
 }
 
 function render() {
-  const visible = visibleImages()
   const selected = state.images.find((image) => image.hash === selectedHash)
   app.innerHTML = `
     <header><h1>Quiz Knights importer</h1>
@@ -170,10 +209,16 @@ function render() {
     <p id="status" role="status"></p>
     <main><aside id="list">
       <div id="category-summary" class="category-summary" aria-label="Image classifications"></div>
-      <div class="image-list-heading"><h2>Images</h2></div>
+      <div class="image-list-heading"><h2>Images</h2>
+        <input id="filename-search" type="search" aria-label="Search image filenames" placeholder="Search filenames" autocomplete="off">
+      </div>
       <div id="image-items"></div>
     </aside><section id="preview"></section><aside id="editor"></aside></main>`
-  const list = app.querySelector<HTMLElement>("#image-items")!
+  app.querySelector<HTMLInputElement>("#filename-search")!.value = filenameQuery
+  app.querySelector<HTMLInputElement>("#filename-search")!.addEventListener("input", (event) => {
+    filenameQuery = (event.target as HTMLInputElement).value
+    renderImageItems()
+  })
   const summaries = app.querySelector<HTMLElement>("#category-summary")!
   const summaryItems = [
     { filter: "needs-review", label: "Needs review" },
@@ -194,22 +239,13 @@ function render() {
     button.addEventListener("click", () => setImageFilter(item.filter))
     summaries.append(button)
   }
-  app.querySelector<HTMLElement>("#current-filename")!.textContent = selected
-    ? selected.filename.split(/[\\/]/).at(-1) || selected.filename
-    : "None selected"
+  app.querySelector<HTMLElement>("#current-filename")!.textContent = selected ? filename(selected.filename) : "None selected"
   if (state.lastImport?.images === 0) {
     const notice = app.querySelector<HTMLElement>("#import-notice")!
     notice.textContent = `The last ZIP (${state.lastImport.filename}) contained no image attachments. Export the WhatsApp chat with media and select that ZIP.`
     notice.classList.add("error")
   }
-  if (!visible.length) list.textContent = "No images match this filter. Import a ZIP or choose another category."
-  for (const image of visible) {
-    const button = document.createElement("button")
-    button.className = `image-item ${image.hash === selectedHash ? "selected" : ""}`
-    button.textContent = `${image.timestamp_ms === null ? "Unknown date" : new Date(image.timestamp_ms).toLocaleString()}\n${image.classification || "Unclassified"}${image.saved_date ? " · saved" : ""}`
-    button.addEventListener("click", () => selectImage(image.hash))
-    list.append(button)
-  }
+  renderImageItems()
   const preview = app.querySelector<HTMLElement>("#preview")!
   const editor = app.querySelector<HTMLElement>("#editor")!
   if (!selected) preview.textContent = "Import a WhatsApp ZIP to begin."
@@ -240,6 +276,22 @@ function render() {
   }
   app.querySelector<HTMLInputElement>("#zip")!.addEventListener("change", importZip)
   app.querySelector<HTMLButtonElement>("#save")!.addEventListener("click", save)
+}
+
+function renderImageItems() {
+  const list = app.querySelector<HTMLElement>("#image-items")!
+  const visible = visibleImages()
+  list.replaceChildren()
+  if (!visible.length) list.textContent = filenameQuery.trim()
+    ? "No filenames match this search and category."
+    : "No images match this filter. Import a ZIP or choose another category."
+  for (const image of visible) {
+    const button = document.createElement("button")
+    button.className = `image-item ${image.hash === selectedHash ? "selected" : ""}`
+    button.textContent = `${filename(image.filename)}\n${image.timestamp_ms === null ? "Unknown date" : new Date(image.timestamp_ms).toLocaleString()}\n${image.classification || "Unclassified"}${image.saved_date ? " · saved" : ""}`
+    button.addEventListener("click", () => selectImage(image.hash))
+    list.append(button)
+  }
 }
 
 function renderRecordForm(editor: HTMLElement, image: Image) {
