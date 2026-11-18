@@ -171,12 +171,13 @@ async function persistEdits() {
   await persistNotes()
 }
 
-async function selectImage(hash: string) {
+async function selectImage(hash: string, focusHistory = false) {
   window.clearTimeout(draftTimer)
   window.clearTimeout(notesTimer)
   try { await persistEdits() } catch (error) { status((error as Error).message, true); return }
   selectedHash = hash
   render()
+  if (focusHistory) app.querySelector<HTMLInputElement>("#record-form input[name=history]")?.focus()
 }
 
 async function moveSelection(direction: -1 | 1) {
@@ -479,7 +480,7 @@ function renderImageItems() {
     details.className = "image-item-details"
     details.textContent = `${filename(image.filename)}\n${image.timestamp_ms === null ? "Unknown date" : new Date(image.timestamp_ms).toLocaleString()}\n${image.classification === "scoresheet" ? "Scoresheet" : image.classification === "other" ? "Other" : "Unclassified"}${image.saved_date ? " · saved" : ""}`
     button.append(thumbnail, details)
-    button.addEventListener("click", () => selectImage(image.hash))
+    button.addEventListener("click", () => selectImage(image.hash, true))
     list.append(button)
   }
   list.querySelector<HTMLElement>(".image-item.selected")?.scrollIntoView({ block: "nearest" })
