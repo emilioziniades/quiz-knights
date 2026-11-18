@@ -35,6 +35,7 @@ let imageFilter: ImageFilter = "needs-review"
 let filenameQuery = ""
 let draftTimer: number | undefined
 let notesTimer: number | undefined
+let keyboardNavigation = Promise.resolve()
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options)
@@ -174,6 +175,16 @@ async function selectImage(hash: string) {
   try { await persistEdits() } catch (error) { status((error as Error).message, true); return }
   selectedHash = hash
   render()
+}
+
+async function moveSelection(direction: -1 | 1) {
+  const visible = visibleImages()
+  if (!visible.length) return
+  const index = visible.findIndex((image) => image.hash === selectedHash)
+  const nextIndex = index === -1
+    ? (direction === 1 ? 0 : visible.length - 1)
+    : Math.max(0, Math.min(visible.length - 1, index + direction))
+  if (nextIndex !== index) await selectImage(visible[nextIndex].hash)
 }
 
 async function classify(value: "complete" | "incomplete" | "other") {
@@ -338,6 +349,7 @@ function renderImageItems() {
     button.addEventListener("click", () => selectImage(image.hash))
     list.append(button)
   }
+  list.querySelector<HTMLElement>(".image-item.selected")?.scrollIntoView({ block: "nearest" })
 }
 
 function renderRecordForm(editor: HTMLElement, image: Image) {
@@ -380,6 +392,18 @@ function renderRecordForm(editor: HTMLElement, image: Image) {
   })
   form.addEventListener("submit", (event) => event.preventDefault())
 }
+
+document.addEventListener("keydown", (event) => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return
+  const target = event.target
+  if (target instanceof HTMLElement &&
+      (target.closest("input, textarea, select, [contenteditable]") || target.isContentEditable)) return
+  const direction = event.key === "ArrowDown" || event.key === "ArrowRight" ? 1
+    : event.key === "ArrowUp" || event.key === "ArrowLeft" ? -1 : null
+  if (direction === null || !visibleImages().length) return
+  event.preventDefault()
+  keyboardNavigation = keyboardNavigation.then(() => moveSelection(direction))
+})
 
 render()
 refresh().catch((error) => status(error.message, true))
