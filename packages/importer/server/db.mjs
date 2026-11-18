@@ -1,0 +1,207 @@
+import { createHash, randomUUID } from "node:crypto"
+import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs"
+import { dirname } from "node:path"
+import { DatabaseSync } from "node:sqlite"
+
+export const categories = [
+  "history", "geography", "science", "sport", "music", "art", "guest",
+  "current_affairs", "general_knowledge", "film",
+]
+
+const schema = `
+  PRAGMA foreign_keys = ON;
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS imports (
+    id INTEGER PRIMARY KEY,
+    hash TEXT NOT NULL UNIQUE,
+    filename TEXT NOT NULL,
+    imported_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS messages (
+    import_id INTEGER NOT NULL REFERENCES imports(id),
+    ordinal INTEGER NOT NULL,
+    timestamp_ms INTEGER,
+    body TEXT NOT NULL,
+    PRIMARY KEY (import_id, ordinal)
+  );
+  CREATE TABLE IF NOT EXISTS images (
+    hash TEXT PRIMARY KEY,
+    mime TEXT NOT NULL,
+    bytes BLOB NOT NULL,
+    classification TEXT CHECK (classification IN ('complete', 'incomplete', 'other'))
+  );
+  CREATE TABLE IF NOT EXISTS image_occurrences (
+    import_id INTEGER NOT NULL REFERENCES imports(id),
+    archive_path TEXT NOT NULL,
+    image_hash TEXT NOT NULL REFERENCES images(hash),
+    timestamp_ms INTEGER,
+    PRIMARY KEY (import_id, archive_path)
+  );
+  CREATE INDEX IF NOT EXISTS image_occurrences_hash ON image_occurrences(image_hash);
+  CREATE TABLE IF NOT EXISTS drafts (
+    sheet_id TEXT PRIMARY KEY REFERENCES images(hash),
+    payload TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS results (
+    date TEXT PRIMARY KEY,
+    sheet_id TEXT UNIQUE REFERENCES images(hash),
+    payload TEXT NOT NULL
+  );
+`
+
+function withTransaction(db, action) {
+  db.exec("BEGIN IMMEDIATE")
+  try {
+    const result = action()
+    db.exec("COMMIT")
+    return result
+  } catch (error) {
+    db.exec("ROLLBACK")
+    throw error
+  }
+}
+
+function validateRecord(value) {
+  if (!value || typeof value !== "object") throw new Error("Result is required")
+  const date = value.date
+  if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      Number.isNaN(Date.parse(`${date}T00:00:00Z`)) ||
+      new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) !== date) {
+    throw new Error("Enter a valid quiz date (YYYY-MM-DD)")
+  }
+  const scores = value.category_scores
+  if (!scores || typeof scores !== "object" || categories.some((name) =>
+    typeof scores[name] !== "number" || !Number.isFinite(scores[name]) ||
+    scores[name] < 0 || scores[name] > 5 || !Number.isInteger(scores[name] * 2))) {
+    throw new Error("Enter every category score from 0 to 5 in half-point steps")
+  }
+  if (!categories.includes(value.double_up_category)) {
+    throw new Error("Choose a double-up category")
+  }
+  if (!Array.isArray(value.round_position) || value.round_position.length !== 5 ||
+      value.round_position.some((position) => !Number.isInteger(position) || position < 1)) {
+    throw new Error("Enter five positive round positions")
+  }
+  return {
+    date,
+    category_scores: Object.fromEntries(categories.map((name) => [name, scores[name]])),
+    double_up_category: value.double_up_category,
+    round_position: value.round_position,
+  }
+}
+
+export function imageHash(bytes) {
+  return createHash("sha256").update(bytes).digest("hex")
+}
+
+export function openStore(databasePath, exportPath) {
+  mkdirSync(dirname(databasePath), { recursive: true })
+  const db = new DatabaseSync(databasePath)
+  db.exec("PRAGMA journal_mode = WAL")
+  db.exec(schema)
+
+  if (!db.prepare("SELECT 1 FROM settings WHERE key = 'seeded'").get()) {
+    const initial = existsSync(exportPath) ? JSON.parse(readFileSync(exportPath, "utf8")) : []
+    if (!Array.isArray(initial)) throw new Error("Published data must be a JSON array")
+    withTransaction(db, () => {
+      const insert = db.prepare("INSERT OR IGNORE INTO results (date, payload) VALUES (?, ?)")
+      for (const item of initial) {
+        const record = validateRecord(item)
+        insert.run(record.date, JSON.stringify(record))
+      }
+      db.prepare("INSERT INTO settings (key, value) VALUES ('seeded', '1')").run()
+    })
+  }
+
+  return {
+    db,
+    close: () => db.close(),
+    listImages() {
+      return db.prepare(`
+        SELECT i.hash, i.mime, i.classification,
+               MIN(o.timestamp_ms) AS timestamp_ms,
+               COUNT(o.archive_path) AS occurrences,
+               d.payload AS draft,
+               r.date AS saved_date
+        FROM images i
+        LEFT JOIN image_occurrences o ON o.image_hash = i.hash
+        LEFT JOIN drafts d ON d.sheet_id = i.hash
+        LEFT JOIN results r ON r.sheet_id = i.hash
+        GROUP BY i.hash
+        ORDER BY timestamp_ms IS NULL, timestamp_ms, i.hash
+      `).all().map((row) => ({ ...row, draft: row.draft ? JSON.parse(row.draft) : null }))
+    },
+    getImage(hash) {
+      return db.prepare("SELECT mime, bytes FROM images WHERE hash = ?").get(hash)
+    },
+    counts() {
+      return {
+        imports: db.prepare("SELECT COUNT(*) AS n FROM imports").get().n,
+        images: db.prepare("SELECT COUNT(*) AS n FROM images").get().n,
+        results: db.prepare("SELECT COUNT(*) AS n FROM results").get().n,
+      }
+    },
+    setClassification(hash, classification) {
+      if (!["complete", "incomplete", "other"].includes(classification)) {
+        throw new Error("Invalid classification")
+      }
+      if (classification !== "complete" &&
+          db.prepare("SELECT 1 FROM results WHERE sheet_id = ?").get(hash)) {
+        throw new Error("This image has a saved result; change or remove that result first")
+      }
+      const outcome = db.prepare("UPDATE images SET classification = ? WHERE hash = ?")
+        .run(classification, hash)
+      if (!outcome.changes) throw new Error("Image not found")
+    },
+    setDraft(hash, payload) {
+      if (!db.prepare("SELECT 1 FROM images WHERE hash = ?").get(hash)) {
+        throw new Error("Image not found")
+      }
+      db.prepare(`
+        INSERT INTO drafts (sheet_id, payload) VALUES (?, ?)
+        ON CONFLICT(sheet_id) DO UPDATE SET payload = excluded.payload,
+          updated_at = CURRENT_TIMESTAMP
+      `).run(hash, JSON.stringify(payload))
+    },
+    save() {
+      const drafts = db.prepare(`
+        SELECT d.sheet_id, d.payload, i.classification
+        FROM drafts d JOIN images i ON i.hash = d.sheet_id
+        WHERE i.classification = 'complete'
+      `).all()
+      const ready = drafts.map(({ sheet_id, payload }) => {
+        return { sheetId: sheet_id, record: validateRecord(JSON.parse(payload)) }
+      })
+
+      withTransaction(db, () => {
+        for (const { sheetId, record } of ready) {
+          const other = db.prepare("SELECT sheet_id FROM results WHERE date = ?").get(record.date)
+          if (other && other.sheet_id !== sheetId) {
+            throw new Error(`A result for ${record.date} already exists`)
+          }
+          db.prepare("DELETE FROM results WHERE sheet_id = ? AND date <> ?")
+            .run(sheetId, record.date)
+          db.prepare(`
+            INSERT INTO results (date, sheet_id, payload) VALUES (?, ?, ?)
+            ON CONFLICT(date) DO UPDATE SET payload = excluded.payload
+          `).run(record.date, sheetId, JSON.stringify(record))
+        }
+      })
+
+      const published = db.prepare("SELECT payload FROM results ORDER BY date").all()
+        .map((row) => JSON.parse(row.payload))
+      const temporary = `${exportPath}.${randomUUID()}.tmp`
+      try {
+        writeFileSync(temporary, JSON.stringify(published, null, 2) + "\n")
+        renameSync(temporary, exportPath)
+      } finally {
+        if (existsSync(temporary)) unlinkSync(temporary)
+      }
+      return { results: published.length }
+    },
+  }
+}
