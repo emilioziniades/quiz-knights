@@ -137,6 +137,29 @@ function hasAllRecordFields(value) {
     value.round_position.every((position) => typeof position === "number")
 }
 
+function resultDifferences(saved, entered) {
+  const differences = []
+  for (const category of categories) {
+    const previous = saved.category_scores[category]
+    const current = entered.category_scores[category]
+    if (previous !== current) {
+      const name = category.replaceAll("_", " ")
+      differences.push(`${name} score (saved ${previous}, entered ${current})`)
+    }
+  }
+  if (saved.double_up_category !== entered.double_up_category) {
+    differences.push(`double-up (saved ${saved.double_up_category.replaceAll("_", " ")}, entered ${entered.double_up_category.replaceAll("_", " ")})`)
+  }
+  for (let index = 0; index < 5; index++) {
+    const previous = saved.round_position[index]
+    const current = entered.round_position[index]
+    if (previous !== current) {
+      differences.push(`round ${index + 1} position (saved ${previous}, entered ${current})`)
+    }
+  }
+  return differences
+}
+
 export function imageHash(bytes) {
   return createHash("sha256").update(bytes).digest("hex")
 }
@@ -259,8 +282,9 @@ export function openStore(databasePath, exportPath) {
           const other = db.prepare("SELECT sheet_id, payload FROM results WHERE date = ?").get(record.date)
           if (other && other.sheet_id !== sheetId) {
             const existing = validateRecord(JSON.parse(other.payload))
-            if (JSON.stringify(existing) !== JSON.stringify(record)) {
-              throw new Error(`A different result for ${record.date} already exists`)
+            const differences = resultDifferences(existing, record)
+            if (differences.length) {
+              throw new Error(`Result for ${record.date} differs: ${differences.join("; ")}`)
             }
             db.prepare("DELETE FROM results WHERE sheet_id = ? AND date <> ?")
               .run(sheetId, record.date)

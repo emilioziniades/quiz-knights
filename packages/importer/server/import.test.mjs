@@ -138,8 +138,15 @@ test("accepts an identical result for a date but rejects different values", () =
 
     store.setDraft(secondHash, {
       ...record("2024-02-01"), category_scores: { ...scores, history: 4 },
+      double_up_category: "music", round_position: [1, 2, 9, 4, 5],
     })
-    assert.throws(() => store.save(), /different result.*already exists/)
+    assert.throws(() => store.save(), (error) => {
+      assert.match(error.message, /history score \(saved 3, entered 4\)/)
+      assert.match(error.message, /double-up \(saved history, entered music\)/)
+      assert.match(error.message, /round 3 position \(saved 3, entered 9\)/)
+      assert.doesNotMatch(error.message, /geography score/)
+      return true
+    })
     assert.equal(store.counts().results, 1)
     assert.deepEqual(JSON.parse(readFileSync(exportPath, "utf8")), [record("2024-02-01")])
   } finally {
