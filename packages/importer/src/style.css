@@ -15,6 +15,8 @@ h2 { font-size: 1rem; margin: 0.5rem 0; }
 main { display: grid; grid-template-columns: 15rem minmax(20rem, 1fr) 20rem; height: calc(100vh - 10rem); min-height: 25rem; border-top: 1px solid #ccd1d8; }
 main > * { overflow: auto; padding: 1rem; }
 #list { background: white; border-right: 1px solid #ccd1d8; }
+.list-filter { display: block; margin-bottom: 0.75rem; font-weight: 600; }
+.list-filter select { display: block; width: 100%; margin-top: 0.25rem; padding: 0.35rem; font-weight: normal; }
 .image-item { display: block; width: 100%; margin-bottom: 0.4rem; padding: 0.6rem; text-align: left; white-space: pre-line; background: white; border: 1px solid #ccd1d8; border-radius: 4px; }
 .image-item.selected, #classify .active { border-color: #2865aa; background: #e9f2fd; }
 #preview { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }

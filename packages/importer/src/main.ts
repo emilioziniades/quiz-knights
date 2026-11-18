@@ -22,6 +22,7 @@ type State = {
   results: number
   lastImport: { filename: string; images: number } | null
 }
+type ImageFilter = "needs-review" | "all" | "unclassified" | "complete" | "incomplete" | "other"
 
 const categories = [
   "history", "geography", "science", "sport", "music", "art", "guest",
@@ -30,7 +31,7 @@ const categories = [
 const app = document.querySelector<HTMLDivElement>("#app")!
 let state: State = { imports: 0, images: [], results: 0, lastImport: null }
 let selectedHash: string | null = null
-let showAll = false
+let imageFilter: ImageFilter = "needs-review"
 let draftTimer: number | undefined
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
@@ -49,9 +50,15 @@ function status(text: string, error = false) {
 }
 
 function visibleImages() {
-  return showAll ? state.images : state.images.filter((image) =>
-    image.classification === null || image.classification === "incomplete" ||
-    (image.classification === "complete" && !image.saved_date))
+  return state.images.filter((image) => {
+    if (imageFilter === "all") return true
+    if (imageFilter === "unclassified") return image.classification === null
+    if (imageFilter === "needs-review") {
+      return image.classification === null || image.classification === "incomplete" ||
+        (image.classification === "complete" && !image.saved_date)
+    }
+    return image.classification === imageFilter
+  })
 }
 
 function localDate(timestamp: number) {
@@ -147,15 +154,27 @@ function render() {
   app.innerHTML = `
     <header><h1>Quiz Knights importer</h1>
       <label class="import-button">Import chat history ZIP<input id="zip" type="file" accept=".zip" hidden></label>
-      <label><input id="show-all" type="checkbox" ${showAll ? "checked" : ""}> Show all</label>
       <button id="save" type="button">Save</button>
     </header>
     <p id="current-image"><strong>Current image:</strong> <span id="current-filename"></span></p>
     <p id="summary">${state.imports} ZIP imports · ${state.images.length} unique images · ${state.results} saved results</p>
     <p id="import-notice"></p>
     <p id="status" role="status"></p>
-    <main><aside id="list"></aside><section id="preview"></section><aside id="editor"></aside></main>`
-  const list = app.querySelector<HTMLElement>("#list")!
+    <main><aside id="list">
+      <label class="list-filter">Show
+        <select id="image-filter">
+          <option value="needs-review">Needs review</option>
+          <option value="all">All images</option>
+          <option value="unclassified">Unclassified</option>
+          <option value="complete">Complete score sheets</option>
+          <option value="incomplete">Incomplete score sheets</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <div id="image-items"></div>
+    </aside><section id="preview"></section><aside id="editor"></aside></main>`
+  const list = app.querySelector<HTMLElement>("#image-items")!
+  app.querySelector<HTMLSelectElement>("#image-filter")!.value = imageFilter
   app.querySelector<HTMLElement>("#current-filename")!.textContent = selected
     ? selected.filename.split(/[\\/]/).at(-1) || selected.filename
     : "None selected"
@@ -164,7 +183,7 @@ function render() {
     notice.textContent = `The last ZIP (${state.lastImport.filename}) contained no image attachments. Export the WhatsApp chat with media and select that ZIP.`
     notice.classList.add("error")
   }
-  if (!visible.length) list.textContent = "No images need review. Import a ZIP or choose Show all."
+  if (!visible.length) list.textContent = "No images match this filter. Import a ZIP or choose another category."
   for (const image of visible) {
     const button = document.createElement("button")
     button.className = `image-item ${image.hash === selectedHash ? "selected" : ""}`
@@ -201,10 +220,10 @@ function render() {
     }
   }
   app.querySelector<HTMLInputElement>("#zip")!.addEventListener("change", importZip)
-  app.querySelector<HTMLInputElement>("#show-all")!.addEventListener("change", async (event) => {
+  app.querySelector<HTMLSelectElement>("#image-filter")!.addEventListener("change", async (event) => {
     window.clearTimeout(draftTimer)
     try { await persistDraft() } catch (error) { status((error as Error).message, true); return }
-    showAll = (event.target as HTMLInputElement).checked
+    imageFilter = (event.target as HTMLSelectElement).value as ImageFilter
     selectedHash = visibleImages()[0]?.hash || null
     render()
   })
