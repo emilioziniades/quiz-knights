@@ -278,10 +278,13 @@ function render() {
     </aside><section id="preview">
       <div id="current-image">
         <span class="current-image-label"><strong>Current image:</strong> <span id="current-filename"></span></span>
-        <span class="rotation-controls">
-          <button id="rotate-left" type="button" aria-label="Rotate image left 90 degrees" title="Rotate left 90°">↶</button>
-          <button id="rotate-right" type="button" aria-label="Rotate image right 90 degrees" title="Rotate right 90°">↷</button>
-        </span>
+        <div class="preview-controls">
+          <div id="zoom-controls" class="zoom-controls"></div>
+          <span class="rotation-controls">
+            <button id="rotate-left" type="button" aria-label="Rotate image left 90 degrees" title="Rotate left 90°">↶</button>
+            <button id="rotate-right" type="button" aria-label="Rotate image right 90 degrees" title="Rotate right 90°">↷</button>
+          </span>
+        </div>
       </div>
     </section><aside id="editor"></aside></main>`
   app.querySelector<HTMLInputElement>("#filename-search")!.value = filenameQuery
@@ -326,7 +329,6 @@ function render() {
   else {
     const stage = document.createElement("div")
     stage.className = "image-stage"
-    stage.title = "Scroll to zoom; drag to pan"
     const frame = document.createElement("div")
     frame.className = "image-frame"
     const image = document.createElement("img")
@@ -354,13 +356,7 @@ function render() {
     fitButton.type = "button"
     fitButton.textContent = "Fit"
     fitButton.disabled = true
-    const zoomControls = document.createElement("div")
-    zoomControls.className = "zoom-controls"
-    const zoomHint = document.createElement("span")
-    zoomHint.className = "zoom-hint"
-    zoomHint.textContent = "Scroll to zoom · drag to pan"
-    zoomControls.append(zoomOut, zoomLevel, zoomIn, fitButton, zoomHint)
-    preview.append(zoomControls)
+    app.querySelector<HTMLElement>("#zoom-controls")!.append(zoomOut, zoomLevel, zoomIn, fitButton)
     const fit = () => {
       if (!image.naturalWidth || !image.naturalHeight || !stage.clientWidth || !stage.clientHeight) return
       const quarterTurn = selected.rotation_degrees % 180 !== 0
@@ -428,11 +424,6 @@ function render() {
     previewResizeObserver = new ResizeObserver(fit)
     previewResizeObserver.observe(stage)
     image.src = `/api/images/${selected.hash}`
-    const download = document.createElement("a")
-    download.href = image.src
-    download.download = selected.hash
-    download.textContent = "Open or download image"
-    preview.append(download)
     editor.innerHTML = `<h2>Classify</h2><div id="classify"></div>`
     for (const [value, text] of [[null, "Unclassified"], ["scoresheet", "Scoresheet"], ["other", "Other"]] as const) {
       const button = document.createElement("button")
