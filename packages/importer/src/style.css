@@ -6,12 +6,13 @@ button, .import-button { cursor: pointer; }
 header { display: flex; gap: 1rem; align-items: center; padding: 1rem; background: white; border-bottom: 1px solid #ccd1d8; }
 h1 { font-size: 1.25rem; margin: 0 auto 0 0; }
 h2 { font-size: 1rem; margin: 0.5rem 0; }
-#summary, #status, #import-notice { margin: 0; padding: 0.4rem 1rem; }
+#current-image, #summary, #status, #import-notice { margin: 0; padding: 0.4rem 1rem; }
+#current-image { background: #e9f2fd; overflow-wrap: anywhere; }
 #import-notice:empty { display: none; }
 #status { min-height: 2rem; color: #245a37; }
 #status.error, #import-notice.error { color: #a02626; }
 .import-button, header button { border: 1px solid #667483; border-radius: 4px; padding: 0.5rem 0.75rem; background: #f7f9fb; }
-main { display: grid; grid-template-columns: 15rem minmax(20rem, 1fr) 20rem; height: calc(100vh - 8rem); min-height: 25rem; border-top: 1px solid #ccd1d8; }
+main { display: grid; grid-template-columns: 15rem minmax(20rem, 1fr) 20rem; height: calc(100vh - 10rem); min-height: 25rem; border-top: 1px solid #ccd1d8; }
 main > * { overflow: auto; padding: 1rem; }
 #list { background: white; border-right: 1px solid #ccd1d8; }
 .image-item { display: block; width: 100%; margin-bottom: 0.4rem; padding: 0.6rem; text-align: left; white-space: pre-line; background: white; border: 1px solid #ccd1d8; border-radius: 4px; }

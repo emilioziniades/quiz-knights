@@ -77,6 +77,7 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
     assert.equal(store.counts().imports, 2)
     assert.equal(store.counts().images, 2)
     assert.equal(store.listImages().find((image) => image.hash === hash).classification, "complete")
+    assert.equal(store.listImages().find((image) => image.hash === hash).filename, "IMG-1.jpg")
     assert.equal(store.listImages().find((image) => image.hash === hash).occurrences, 2)
     assert.equal(store.listImages().find((image) => image.hash === hash).saved_date, "2024-02-08")
     store.close()

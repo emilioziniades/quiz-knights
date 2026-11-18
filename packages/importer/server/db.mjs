@@ -125,6 +125,10 @@ export function openStore(databasePath, exportPath) {
         SELECT i.hash, i.mime, i.classification,
                MIN(o.timestamp_ms) AS timestamp_ms,
                COUNT(o.archive_path) AS occurrences,
+               (SELECT archive_path FROM image_occurrences
+                WHERE image_hash = i.hash
+                ORDER BY timestamp_ms IS NULL, timestamp_ms, import_id, archive_path
+                LIMIT 1) AS filename,
                d.payload AS draft,
                r.date AS saved_date
         FROM images i

@@ -8,6 +8,7 @@ type Draft = {
 }
 type Image = {
   hash: string
+  filename: string
   mime: string
   classification: "complete" | "incomplete" | "other" | null
   timestamp_ms: number | null
@@ -149,11 +150,15 @@ function render() {
       <label><input id="show-all" type="checkbox" ${showAll ? "checked" : ""}> Show all</label>
       <button id="save" type="button">Save</button>
     </header>
+    <p id="current-image"><strong>Current image:</strong> <span id="current-filename"></span></p>
     <p id="summary">${state.imports} ZIP imports · ${state.images.length} unique images · ${state.results} saved results</p>
     <p id="import-notice"></p>
     <p id="status" role="status"></p>
     <main><aside id="list"></aside><section id="preview"></section><aside id="editor"></aside></main>`
   const list = app.querySelector<HTMLElement>("#list")!
+  app.querySelector<HTMLElement>("#current-filename")!.textContent = selected
+    ? selected.filename.split(/[\\/]/).at(-1) || selected.filename
+    : "None selected"
   if (state.lastImport?.images === 0) {
     const notice = app.querySelector<HTMLElement>("#import-notice")!
     notice.textContent = `The last ZIP (${state.lastImport.filename}) contained no image attachments. Export the WhatsApp chat with media and select that ZIP.`
