@@ -1,22 +1,15 @@
 {
-  "name": "quiz-knights",
+  "name": "quiz-knights-monorepo",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "workspaces": ["packages/*"],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev:web": "npm run dev --workspace quiz-knights",
+    "dev:importer": "npm run dev --workspace quiz-knights-importer",
+    "build:web": "npm run build --workspace quiz-knights",
+    "build:importer": "npm run build --workspace quiz-knights-importer"
   },
   "devDependencies": {
-    "@types/luxon": "^3.4.2",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
-  },
-  "dependencies": {
-    "chart.js": "^4.4.2",
-    "chartjs-plugin-datalabels": "^2.2.0",
-    "colorjs.io": "^0.5.0",
-    "luxon": "^3.4.4"
   }
 }
