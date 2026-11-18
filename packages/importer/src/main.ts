@@ -48,16 +48,18 @@ function status(text: string, error = false) {
   }
 }
 
+function matchesFilter(image: Image, filter: ImageFilter) {
+  if (filter === "all") return true
+  if (filter === "unclassified") return image.classification === null
+  if (filter === "needs-review") {
+    return image.classification === null || image.classification === "incomplete" ||
+      (image.classification === "complete" && !image.saved_date)
+  }
+  return image.classification === filter
+}
+
 function visibleImages() {
-  return state.images.filter((image) => {
-    if (imageFilter === "all") return true
-    if (imageFilter === "unclassified") return image.classification === null
-    if (imageFilter === "needs-review") {
-      return image.classification === null || image.classification === "incomplete" ||
-        (image.classification === "complete" && !image.saved_date)
-    }
-    return image.classification === imageFilter
-  })
+  return state.images.filter((image) => matchesFilter(image, imageFilter))
 }
 
 async function setImageFilter(filter: ImageFilter) {
@@ -169,38 +171,29 @@ function render() {
     <p id="status" role="status"></p>
     <main><aside id="list">
       <div id="category-summary" class="category-summary" aria-label="Image classifications"></div>
-      <label class="list-filter">Show
-        <select id="image-filter">
-          <option value="needs-review">Needs review</option>
-          <option value="all">All images</option>
-          <option value="unclassified">Unclassified</option>
-          <option value="complete">Complete score sheets</option>
-          <option value="incomplete">Incomplete score sheets</option>
-          <option value="other">Other</option>
-        </select>
-      </label>
       <div id="image-items"></div>
     </aside><section id="preview"></section><aside id="editor"></aside></main>`
   const list = app.querySelector<HTMLElement>("#image-items")!
   const summaries = app.querySelector<HTMLElement>("#category-summary")!
   const summaryItems = [
-    { filter: "unclassified", label: "Unclassified", count: state.images.filter((image) => image.classification === null).length },
-    { filter: "complete", label: "Complete", count: state.images.filter((image) => image.classification === "complete").length },
-    { filter: "incomplete", label: "Incomplete", count: state.images.filter((image) => image.classification === "incomplete").length },
-    { filter: "other", label: "Other", count: state.images.filter((image) => image.classification === "other").length },
+    { filter: "needs-review", label: "Needs review" },
+    { filter: "all", label: "All images" },
+    { filter: "unclassified", label: "Unclassified" },
+    { filter: "complete", label: "Complete score sheets" },
+    { filter: "incomplete", label: "Incomplete score sheets" },
+    { filter: "other", label: "Other" },
   ] as const
   for (const item of summaryItems) {
     const button = document.createElement("button")
     button.type = "button"
     button.classList.toggle("active", imageFilter === item.filter)
-    button.title = `Show ${item.label.toLowerCase()} images`
+    button.title = `Show ${item.label.toLowerCase()}`
     const count = document.createElement("strong")
-    count.textContent = String(item.count)
-    button.append(count, item.label)
+    count.textContent = String(state.images.filter((image) => matchesFilter(image, item.filter)).length)
+    button.append(item.label, count)
     button.addEventListener("click", () => setImageFilter(item.filter))
     summaries.append(button)
   }
-  app.querySelector<HTMLSelectElement>("#image-filter")!.value = imageFilter
   app.querySelector<HTMLElement>("#current-filename")!.textContent = selected
     ? selected.filename.split(/[\\/]/).at(-1) || selected.filename
     : "None selected"
@@ -246,8 +239,6 @@ function render() {
     }
   }
   app.querySelector<HTMLInputElement>("#zip")!.addEventListener("change", importZip)
-  app.querySelector<HTMLSelectElement>("#image-filter")!.addEventListener("change", (event) =>
-    setImageFilter((event.target as HTMLSelectElement).value as ImageFilter))
   app.querySelector<HTMLButtonElement>("#save")!.addEventListener("click", save)
 }
 

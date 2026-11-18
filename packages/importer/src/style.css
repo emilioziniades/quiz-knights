@@ -16,12 +16,10 @@ main { display: grid; grid-template-columns: 15rem minmax(20rem, 1fr) 20rem; hei
 main > * { overflow: auto; padding: 1rem; }
 #list { display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: white; border-right: 1px solid #ccd1d8; }
 #image-items { flex: 1; min-height: 0; overflow: auto; }
-.category-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.35rem; margin-bottom: 0.75rem; }
-.category-summary button { min-width: 0; padding: 0.4rem; border: 1px solid #ccd1d8; border-radius: 4px; background: #f7f9fb; overflow-wrap: anywhere; }
+.category-summary { display: grid; grid-template-columns: 1fr; gap: 0.35rem; margin-bottom: 0.75rem; }
+.category-summary button { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; min-width: 0; padding: 0.4rem; text-align: left; border: 1px solid #ccd1d8; border-radius: 4px; background: #f7f9fb; }
 .category-summary button.active { border-color: #2865aa; background: #e9f2fd; }
-.category-summary strong { display: block; font-size: 1.2rem; }
-.list-filter { display: block; margin-bottom: 0.75rem; font-weight: 600; }
-.list-filter select { display: block; width: 100%; margin-top: 0.25rem; padding: 0.35rem; font-weight: normal; }
+.category-summary strong { font-size: 1rem; }
 .image-item { display: block; width: 100%; margin-bottom: 0.4rem; padding: 0.6rem; text-align: left; white-space: pre-line; background: white; border: 1px solid #ccd1d8; border-radius: 4px; }
 .image-item.selected, #classify .active { border-color: #2865aa; background: #e9f2fd; }
 #preview { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
