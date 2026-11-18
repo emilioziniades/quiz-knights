@@ -14,7 +14,12 @@ h2 { font-size: 1rem; margin: 0.5rem 0; }
 .import-button, header button { border: 1px solid #667483; border-radius: 4px; padding: 0.5rem 0.75rem; background: #f7f9fb; }
 main { display: grid; grid-template-columns: 15rem minmax(20rem, 1fr) 20rem; height: calc(100vh - 10rem); min-height: 25rem; border-top: 1px solid #ccd1d8; }
 main > * { overflow: auto; padding: 1rem; }
-#list { background: white; border-right: 1px solid #ccd1d8; }
+#list { display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: white; border-right: 1px solid #ccd1d8; }
+#image-items { flex: 1; min-height: 0; overflow: auto; }
+.category-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.35rem; margin-bottom: 0.75rem; }
+.category-summary button { min-width: 0; padding: 0.4rem; border: 1px solid #ccd1d8; border-radius: 4px; background: #f7f9fb; overflow-wrap: anywhere; }
+.category-summary button.active { border-color: #2865aa; background: #e9f2fd; }
+.category-summary strong { display: block; font-size: 1.2rem; }
 .list-filter { display: block; margin-bottom: 0.75rem; font-weight: 600; }
 .list-filter select { display: block; width: 100%; margin-top: 0.25rem; padding: 0.35rem; font-weight: normal; }
 .image-item { display: block; width: 100%; margin-bottom: 0.4rem; padding: 0.6rem; text-align: left; white-space: pre-line; background: white; border: 1px solid #ccd1d8; border-radius: 4px; }

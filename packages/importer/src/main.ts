@@ -60,6 +60,14 @@ function visibleImages() {
   })
 }
 
+async function setImageFilter(filter: ImageFilter) {
+  window.clearTimeout(draftTimer)
+  try { await persistDraft() } catch (error) { status((error as Error).message, true); return }
+  imageFilter = filter
+  selectedHash = visibleImages()[0]?.hash || null
+  render()
+}
+
 function localDate(timestamp: number) {
   const date = new Date(timestamp)
   const month = String(date.getMonth() + 1).padStart(2, "0")
@@ -160,6 +168,7 @@ function render() {
     <p id="import-notice"></p>
     <p id="status" role="status"></p>
     <main><aside id="list">
+      <div id="category-summary" class="category-summary" aria-label="Image classifications"></div>
       <label class="list-filter">Show
         <select id="image-filter">
           <option value="needs-review">Needs review</option>
@@ -173,6 +182,24 @@ function render() {
       <div id="image-items"></div>
     </aside><section id="preview"></section><aside id="editor"></aside></main>`
   const list = app.querySelector<HTMLElement>("#image-items")!
+  const summaries = app.querySelector<HTMLElement>("#category-summary")!
+  const summaryItems = [
+    { filter: "unclassified", label: "Unclassified", count: state.images.filter((image) => image.classification === null).length },
+    { filter: "complete", label: "Complete", count: state.images.filter((image) => image.classification === "complete").length },
+    { filter: "incomplete", label: "Incomplete", count: state.images.filter((image) => image.classification === "incomplete").length },
+    { filter: "other", label: "Other", count: state.images.filter((image) => image.classification === "other").length },
+  ] as const
+  for (const item of summaryItems) {
+    const button = document.createElement("button")
+    button.type = "button"
+    button.classList.toggle("active", imageFilter === item.filter)
+    button.title = `Show ${item.label.toLowerCase()} images`
+    const count = document.createElement("strong")
+    count.textContent = String(item.count)
+    button.append(count, item.label)
+    button.addEventListener("click", () => setImageFilter(item.filter))
+    summaries.append(button)
+  }
   app.querySelector<HTMLSelectElement>("#image-filter")!.value = imageFilter
   app.querySelector<HTMLElement>("#current-filename")!.textContent = selected
     ? selected.filename.split(/[\\/]/).at(-1) || selected.filename
@@ -219,13 +246,8 @@ function render() {
     }
   }
   app.querySelector<HTMLInputElement>("#zip")!.addEventListener("change", importZip)
-  app.querySelector<HTMLSelectElement>("#image-filter")!.addEventListener("change", async (event) => {
-    window.clearTimeout(draftTimer)
-    try { await persistDraft() } catch (error) { status((error as Error).message, true); return }
-    imageFilter = (event.target as HTMLSelectElement).value as ImageFilter
-    selectedHash = visibleImages()[0]?.hash || null
-    render()
-  })
+  app.querySelector<HTMLSelectElement>("#image-filter")!.addEventListener("change", (event) =>
+    setImageFilter((event.target as HTMLSelectElement).value as ImageFilter))
   app.querySelector<HTMLButtonElement>("#save")!.addEventListener("click", save)
 }
 
