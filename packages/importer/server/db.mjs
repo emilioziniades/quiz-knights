@@ -270,9 +270,13 @@ export function openStore(databasePath, exportPath) {
 
       const published = db.prepare("SELECT payload FROM results ORDER BY date").all()
         .map((row) => JSON.parse(row.payload))
+      const output = JSON.stringify(published, null, 2) + "\n"
+      if (existsSync(exportPath) && readFileSync(exportPath, "utf8") === output) {
+        return { results: published.length }
+      }
       const temporary = `${exportPath}.${randomUUID()}.tmp`
       try {
-        writeFileSync(temporary, JSON.stringify(published, null, 2) + "\n")
+        writeFileSync(temporary, output)
         renameSync(temporary, exportPath)
       } finally {
         if (existsSync(temporary)) unlinkSync(temporary)

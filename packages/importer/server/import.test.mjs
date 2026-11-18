@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { DatabaseSync } from "node:sqlite"
@@ -67,7 +67,12 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
     store.setDraft(hash, record("2024-02-08"))
     store.setNotes(hash, "12th place out of 30, confirmed in chat")
     assert.deepEqual(store.save(), { results: 2 })
-    const published = JSON.parse(readFileSync(exportPath, "utf8"))
+    const exported = readFileSync(exportPath, "utf8")
+    assert.equal(exported, JSON.stringify(JSON.parse(exported), null, 2) + "\n")
+    const inode = statSync(exportPath).ino
+    assert.deepEqual(store.save(), { results: 2 })
+    assert.equal(statSync(exportPath).ino, inode)
+    const published = JSON.parse(exported)
     assert.deepEqual(published.map((item) => item.date), ["2024-02-01", "2024-02-08"])
     assert.equal(published[1].notes, undefined)
     store.close()
