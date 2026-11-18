@@ -30,7 +30,7 @@ Show one image at a time and assign a classification:
 | Scoresheet | The image shows a quiz score sheet, even if some details are missing. |
 | Other | The image is irrelevant to score recording. |
 
-After a classification, advance to the next image. Keep **Other** images out of recording, while retaining their decisions in SQLite. **Unreviewed** contains unclassified images and scoresheets without saved results; **Reviewed** contains Other images and scoresheets with saved results.
+After a classification, advance to the next image. Keep **Other** images out of recording, while retaining their decisions in SQLite. **Unreviewed** contains unclassified images and scoresheets without saved results; **Reviewed** contains only scoresheets with saved results. Other images appear only in their own filter.
 
 ### 2. Record and save results
 

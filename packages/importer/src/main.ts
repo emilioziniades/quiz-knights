@@ -56,8 +56,7 @@ function matchesFilter(image: Image, filter: ImageFilter) {
   if (filter === "unclassified") return image.classification === null
   if (filter === "unreviewed") return image.classification === null ||
     (image.classification === "scoresheet" && !image.saved_date)
-  if (filter === "reviewed") return image.classification === "other" ||
-    (image.classification === "scoresheet" && !!image.saved_date)
+  if (filter === "reviewed") return image.classification === "scoresheet" && !!image.saved_date
   return image.classification === filter
 }
 
