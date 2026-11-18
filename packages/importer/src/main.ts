@@ -326,6 +326,7 @@ function render() {
   else {
     const stage = document.createElement("div")
     stage.className = "image-stage"
+    stage.title = "Scroll to zoom; drag to pan"
     const frame = document.createElement("div")
     frame.className = "image-frame"
     const image = document.createElement("img")
@@ -333,18 +334,95 @@ function render() {
     frame.append(image)
     stage.append(frame)
     preview.append(stage)
+    let zoom = 1
+    let panX = 0
+    let panY = 0
+    const zoomOut = document.createElement("button")
+    zoomOut.type = "button"
+    zoomOut.textContent = "−"
+    zoomOut.disabled = true
+    zoomOut.setAttribute("aria-label", "Zoom out")
+    const zoomLevel = document.createElement("span")
+    zoomLevel.className = "zoom-level"
+    zoomLevel.textContent = "100%"
+    zoomLevel.title = "Relative to the fitted image size"
+    const zoomIn = document.createElement("button")
+    zoomIn.type = "button"
+    zoomIn.textContent = "+"
+    zoomIn.setAttribute("aria-label", "Zoom in")
+    const fitButton = document.createElement("button")
+    fitButton.type = "button"
+    fitButton.textContent = "Fit"
+    fitButton.disabled = true
+    const zoomControls = document.createElement("div")
+    zoomControls.className = "zoom-controls"
+    const zoomHint = document.createElement("span")
+    zoomHint.className = "zoom-hint"
+    zoomHint.textContent = "Scroll to zoom · drag to pan"
+    zoomControls.append(zoomOut, zoomLevel, zoomIn, fitButton, zoomHint)
+    preview.append(zoomControls)
     const fit = () => {
       if (!image.naturalWidth || !image.naturalHeight || !stage.clientWidth || !stage.clientHeight) return
       const quarterTurn = selected.rotation_degrees % 180 !== 0
       const width = quarterTurn ? image.naturalHeight : image.naturalWidth
       const height = quarterTurn ? image.naturalWidth : image.naturalHeight
-      const scale = Math.min(1, stage.clientWidth / width, stage.clientHeight / height)
-      frame.style.width = `${width * scale}px`
-      frame.style.height = `${height * scale}px`
+      const scale = Math.min(1, stage.clientWidth / width, stage.clientHeight / height) * zoom
+      const displayedWidth = width * scale
+      const displayedHeight = height * scale
+      const maxPanX = Math.max(0, (displayedWidth - stage.clientWidth) / 2)
+      const maxPanY = Math.max(0, (displayedHeight - stage.clientHeight) / 2)
+      panX = Math.max(-maxPanX, Math.min(maxPanX, panX))
+      panY = Math.max(-maxPanY, Math.min(maxPanY, panY))
+      frame.style.width = `${displayedWidth}px`
+      frame.style.height = `${displayedHeight}px`
+      frame.style.left = `calc(50% + ${panX}px)`
+      frame.style.top = `calc(50% + ${panY}px)`
       image.style.width = `${image.naturalWidth * scale}px`
       image.style.height = `${image.naturalHeight * scale}px`
       image.style.transform = `translate(-50%, -50%) rotate(${selected.rotation_degrees}deg)`
+      stage.classList.toggle("can-pan", maxPanX > 0 || maxPanY > 0)
+      zoomLevel.textContent = `${Math.round(zoom * 100)}%`
+      zoomOut.disabled = zoom <= 1
+      zoomIn.disabled = zoom >= 8
+      fitButton.disabled = zoom === 1
     }
+    const setZoom = (level: number, anchorX = 0, anchorY = 0) => {
+      const next = Math.max(1, Math.min(8, level))
+      const ratio = next / zoom
+      panX = anchorX - (anchorX - panX) * ratio
+      panY = anchorY - (anchorY - panY) * ratio
+      zoom = next
+      fit()
+    }
+    zoomOut.addEventListener("click", () => setZoom(zoom / 1.5))
+    zoomIn.addEventListener("click", () => setZoom(zoom * 1.5))
+    fitButton.addEventListener("click", () => { panX = 0; panY = 0; setZoom(1) })
+    stage.addEventListener("wheel", (event) => {
+      event.preventDefault()
+      const rect = stage.getBoundingClientRect()
+      const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? stage.clientHeight : 1
+      setZoom(zoom * Math.exp(-event.deltaY * multiplier * 0.002),
+        event.clientX - rect.left - rect.width / 2,
+        event.clientY - rect.top - rect.height / 2)
+    }, { passive: false })
+    let drag: { pointerId: number; x: number; y: number; panX: number; panY: number } | null = null
+    stage.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0 || !stage.classList.contains("can-pan")) return
+      event.preventDefault()
+      drag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, panX, panY }
+      stage.setPointerCapture(event.pointerId)
+      stage.classList.add("panning")
+    })
+    stage.addEventListener("pointermove", (event) => {
+      if (!drag || event.pointerId !== drag.pointerId) return
+      panX = drag.panX + event.clientX - drag.x
+      panY = drag.panY + event.clientY - drag.y
+      fit()
+    })
+    const endDrag = () => { drag = null; stage.classList.remove("panning") }
+    stage.addEventListener("pointerup", endDrag)
+    stage.addEventListener("pointercancel", endDrag)
+    stage.addEventListener("lostpointercapture", endDrag)
     fitPreviewImage = fit
     image.addEventListener("load", fit)
     previewResizeObserver = new ResizeObserver(fit)
