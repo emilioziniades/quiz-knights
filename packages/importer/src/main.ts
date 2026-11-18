@@ -166,11 +166,11 @@ function render() {
       <button id="save" type="button">Save</button>
     </header>
     <p id="current-image"><strong>Current image:</strong> <span id="current-filename"></span></p>
-    <p id="summary">${state.imports} ZIP imports · ${state.images.length} unique images · ${state.results} saved results</p>
     <p id="import-notice"></p>
     <p id="status" role="status"></p>
     <main><aside id="list">
       <div id="category-summary" class="category-summary" aria-label="Image classifications"></div>
+      <div class="image-list-heading"><h2>Images</h2></div>
       <div id="image-items"></div>
     </aside><section id="preview"></section><aside id="editor"></aside></main>`
   const list = app.querySelector<HTMLElement>("#image-items")!
