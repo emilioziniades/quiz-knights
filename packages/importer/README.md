@@ -2,6 +2,8 @@
 
 Local TypeScript web app. It currently displays Hello World.
 
+The proposed importer workflow is in [docs/DESIGN.md](docs/DESIGN.md).
+
 Run from the repository root:
 
 ```sh
