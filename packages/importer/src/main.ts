@@ -12,7 +12,6 @@ type Image = {
   mime: string
   classification: "complete" | "incomplete" | "other" | null
   timestamp_ms: number | null
-  occurrences: number
   draft: Draft | null
   saved_date: string | null
 }
@@ -204,7 +203,7 @@ function render() {
     download.download = selected.hash
     download.textContent = "Open or download image"
     preview.append(download)
-    editor.innerHTML = `<h2>Classify</h2><div id="classify"></div><p>${selected.occurrences} chat occurrences</p>`
+    editor.innerHTML = `<h2>Classify</h2><div id="classify"></div>`
     for (const [value, text] of [["complete", "Complete score sheet"], ["incomplete", "Incomplete score sheet"], ["other", "Other"]] as const) {
       const button = document.createElement("button")
       button.textContent = text

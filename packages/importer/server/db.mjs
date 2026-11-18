@@ -124,7 +124,6 @@ export function openStore(databasePath, exportPath) {
       return db.prepare(`
         SELECT i.hash, i.mime, i.classification,
                MIN(o.timestamp_ms) AS timestamp_ms,
-               COUNT(o.archive_path) AS occurrences,
                (SELECT archive_path FROM image_occurrences
                 WHERE image_hash = i.hash
                 ORDER BY timestamp_ms IS NULL, timestamp_ms, import_id, archive_path
