@@ -442,7 +442,6 @@ function render() {
       field.id = "sheet-notes"
       field.rows = 5
       field.value = selected.notes || ""
-      field.placeholder = "Context, missing details, or other observations"
       field.addEventListener("input", () => {
         window.clearTimeout(notesTimer)
         notesTimer = window.setTimeout(() => persistNotes().catch((error) => status(error.message, true)), 500)
