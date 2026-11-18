@@ -139,10 +139,16 @@ export function openStore(databasePath, exportPath) {
       return db.prepare("SELECT mime, bytes FROM images WHERE hash = ?").get(hash)
     },
     counts() {
+      const lastImport = db.prepare(`
+        SELECT filename,
+          (SELECT COUNT(*) FROM image_occurrences WHERE import_id = imports.id) AS images
+        FROM imports ORDER BY id DESC LIMIT 1
+      `).get()
       return {
         imports: db.prepare("SELECT COUNT(*) AS n FROM imports").get().n,
         images: db.prepare("SELECT COUNT(*) AS n FROM images").get().n,
         results: db.prepare("SELECT COUNT(*) AS n FROM results").get().n,
+        lastImport: lastImport || null,
       }
     },
     setClassification(hash, classification) {

@@ -23,6 +23,23 @@ test("parses common WhatsApp timestamps and multiline messages", () => {
   assert.equal(ios[0].timestampMs, android[0].timestampMs)
 })
 
+test("rejects a text-only chat export without recording a successful import", () => {
+  const directory = mkdtempSync(join(tmpdir(), "quiz-knights-importer-"))
+  const store = openStore(join(directory, "importer.sqlite"), join(directory, "data.json"))
+  const archive = zipSync({
+    "chat.txt": strToU8("[08/02/2024, 9:15:00 AM] Alex: Hello"),
+    "chat.md": strToU8("A text-only export"),
+  })
+  try {
+    assert.throws(() => importArchive(store, archive, "text-only.zip"), /with media/)
+    assert.equal(store.counts().imports, 0)
+    assert.equal(store.counts().images, 0)
+  } finally {
+    store.close()
+    rmSync(directory, { recursive: true, force: true })
+  }
+})
+
 test("keeps decisions across overlapping ZIP imports and exports saved results", () => {
   const directory = mkdtempSync(join(tmpdir(), "quiz-knights-importer-"))
   const databasePath = join(directory, "importer.sqlite")

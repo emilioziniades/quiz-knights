@@ -44,7 +44,13 @@ export function parseChat(text) {
 
 export function importArchive(store, bytes, filename = "chat.zip") {
   const archiveHash = imageHash(bytes)
-  if (store.db.prepare("SELECT 1 FROM imports WHERE hash = ?").get(archiveHash)) {
+  const previous = store.db.prepare("SELECT id FROM imports WHERE hash = ?").get(archiveHash)
+  if (previous) {
+    const previousImages = store.db.prepare("SELECT COUNT(*) AS count FROM image_occurrences WHERE import_id = ?")
+      .get(previous.id).count
+    if (!previousImages) {
+      throw new Error("This ZIP has no image attachments. Export the WhatsApp chat with media and select that ZIP.")
+    }
     return { skipped: true, newImages: 0, images: 0, messages: 0 }
   }
 
@@ -74,7 +80,9 @@ export function importArchive(store, bytes, filename = "chat.zip") {
   const images = Object.entries(files)
     .filter(([name]) => imageMimes.has(/\.[^.]+$/.exec(name)?.[0]?.toLowerCase()))
     .sort(([a], [b]) => a.localeCompare(b))
-  if (!images.length && !messages.length) throw new Error("ZIP contains no chat messages or supported images")
+  if (!images.length) {
+    throw new Error("This ZIP has no image attachments. Export the WhatsApp chat with media and select that ZIP.")
+  }
 
   const db = store.db
   db.exec("BEGIN IMMEDIATE")

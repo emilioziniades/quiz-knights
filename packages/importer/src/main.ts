@@ -15,14 +15,19 @@ type Image = {
   draft: Draft | null
   saved_date: string | null
 }
-type State = { imports: number; images: Image[]; results: number }
+type State = {
+  imports: number
+  images: Image[]
+  results: number
+  lastImport: { filename: string; images: number } | null
+}
 
 const categories = [
   "history", "geography", "science", "sport", "music", "art", "guest",
   "current_affairs", "general_knowledge", "film",
 ]
 const app = document.querySelector<HTMLDivElement>("#app")!
-let state: State = { imports: 0, images: [], results: 0 }
+let state: State = { imports: 0, images: [], results: 0, lastImport: null }
 let selectedHash: string | null = null
 let showAll = false
 let draftTimer: number | undefined
@@ -145,9 +150,15 @@ function render() {
       <button id="save" type="button">Save</button>
     </header>
     <p id="summary">${state.imports} ZIP imports · ${state.images.length} unique images · ${state.results} saved results</p>
+    <p id="import-notice"></p>
     <p id="status" role="status"></p>
     <main><aside id="list"></aside><section id="preview"></section><aside id="editor"></aside></main>`
   const list = app.querySelector<HTMLElement>("#list")!
+  if (state.lastImport?.images === 0) {
+    const notice = app.querySelector<HTMLElement>("#import-notice")!
+    notice.textContent = `The last ZIP (${state.lastImport.filename}) contained no image attachments. Export the WhatsApp chat with media and select that ZIP.`
+    notice.classList.add("error")
+  }
   if (!visible.length) list.textContent = "No images need review. Import a ZIP or choose Show all."
   for (const image of visible) {
     const button = document.createElement("button")
