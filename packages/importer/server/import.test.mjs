@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
+import { DatabaseSync } from "node:sqlite"
 import { test } from "node:test"
 import { strToU8, zipSync } from "fflate"
 import { imageHash, openStore } from "./db.mjs"
@@ -62,7 +63,7 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
     assert.deepEqual(importArchive(store, firstZip, "first.zip"),
       { skipped: false, newImages: 1, images: 1, messages: 1 })
     const hash = imageHash(firstImage)
-    store.setClassification(hash, "complete")
+    store.setClassification(hash, "scoresheet")
     store.setDraft(hash, record("2024-02-08"))
     store.setNotes(hash, "12th place out of 30, confirmed in chat")
     assert.deepEqual(store.save(), { results: 2 })
@@ -78,7 +79,7 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
       { skipped: false, newImages: 1, images: 2, messages: 2 })
     assert.equal(store.counts().imports, 2)
     assert.equal(store.counts().images, 2)
-    assert.equal(store.listImages().find((image) => image.hash === hash).classification, "complete")
+    assert.equal(store.listImages().find((image) => image.hash === hash).classification, "scoresheet")
     assert.equal(store.listImages().find((image) => image.hash === hash).filename, "IMG-1.jpg")
     assert.equal(store.db.prepare("SELECT COUNT(*) AS count FROM image_occurrences WHERE image_hash = ?")
       .get(hash).count, 2)
@@ -86,8 +87,11 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
     assert.equal(store.listImages().find((image) => image.hash === hash).notes,
       "12th place out of 30, confirmed in chat")
     const secondHash = imageHash(secondImage)
-    store.setClassification(secondHash, "incomplete")
+    store.setClassification(secondHash, "scoresheet")
     store.setNotes(secondHash, "Only one corner of the sheet is visible")
+    store.setDraft(secondHash, {
+      ...record("2024-02-15"), category_scores: { ...scores, history: null },
+    })
     assert.equal(store.listImages().find((image) => image.hash === secondHash).notes,
       "Only one corner of the sheet is visible")
     assert.deepEqual(store.save(), { results: 2 })
@@ -112,13 +116,81 @@ test("rejects a conflicting result without changing published data", () => {
     const image = strToU8("image")
     importArchive(store, zipSync({ "IMG.jpg": image }), "chat.zip")
     const hash = imageHash(image)
-    store.setClassification(hash, "complete")
+    store.setClassification(hash, "scoresheet")
     store.setDraft(hash, record("2024-02-01"))
     assert.throws(() => store.save(), /already exists/)
     assert.equal(store.counts().results, 1)
     assert.equal(JSON.parse(readFileSync(exportPath, "utf8")).length, 1)
   } finally {
     store.close()
+    rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test("migrates legacy classifications without losing notes, drafts, or results", () => {
+  const directory = mkdtempSync(join(tmpdir(), "quiz-knights-importer-"))
+  const databasePath = join(directory, "importer.sqlite")
+  const exportPath = join(directory, "data.json")
+  const hashes = ["complete", "incomplete", "other"].map((value) => imageHash(strToU8(value)))
+  const legacy = new DatabaseSync(databasePath)
+  try {
+    legacy.exec(`
+      PRAGMA foreign_keys = ON;
+      CREATE TABLE images (
+        hash TEXT PRIMARY KEY, mime TEXT NOT NULL, bytes BLOB NOT NULL,
+        classification TEXT CHECK (classification IN ('complete', 'incomplete', 'other'))
+      );
+      CREATE TABLE drafts (sheet_id TEXT PRIMARY KEY REFERENCES images(hash), payload TEXT NOT NULL);
+      CREATE TABLE image_notes (image_hash TEXT PRIMARY KEY REFERENCES images(hash), notes TEXT NOT NULL);
+      CREATE TABLE results (date TEXT PRIMARY KEY, sheet_id TEXT UNIQUE REFERENCES images(hash), payload TEXT NOT NULL);
+      CREATE TABLE imports (id INTEGER PRIMARY KEY, hash TEXT NOT NULL UNIQUE, filename TEXT NOT NULL);
+      CREATE TABLE image_occurrences (
+        import_id INTEGER NOT NULL REFERENCES imports(id), archive_path TEXT NOT NULL,
+        image_hash TEXT NOT NULL REFERENCES images(hash), timestamp_ms INTEGER,
+        PRIMARY KEY (import_id, archive_path)
+      );
+    `)
+    for (const [index, classification] of ["complete", "incomplete", "other"].entries()) {
+      legacy.prepare("INSERT INTO images VALUES (?, ?, ?, ?)")
+        .run(hashes[index], "image/jpeg", strToU8(classification), classification)
+    }
+    legacy.prepare("INSERT INTO drafts VALUES (?, ?)")
+      .run(hashes[1], JSON.stringify({ ...record("2024-06-06"), category_scores: { ...scores, art: null } }))
+    legacy.prepare("INSERT INTO image_notes VALUES (?, ?)").run(hashes[1], "12th out of 30")
+    legacy.prepare("INSERT INTO results VALUES (?, ?, ?)")
+      .run("2024-02-08", hashes[0], JSON.stringify(record("2024-02-08")))
+    legacy.prepare("INSERT INTO imports VALUES (?, ?, ?)").run(1, "legacy-zip", "chat.zip")
+    legacy.prepare("INSERT INTO image_occurrences VALUES (?, ?, ?, ?)")
+      .run(1, "partial.jpg", hashes[1], null)
+  } finally {
+    legacy.close()
+  }
+
+  try {
+    const store = openStore(databasePath, exportPath)
+    try {
+      const images = store.listImages()
+      assert.deepEqual(hashes.map((hash) => images.find((image) => image.hash === hash).classification),
+        ["scoresheet", "scoresheet", "other"])
+      assert.equal(images.find((image) => image.hash === hashes[1]).notes, "12th out of 30")
+      assert.equal(images.find((image) => image.hash === hashes[1]).filename, "partial.jpg")
+      assert.equal(images.find((image) => image.hash === hashes[1]).draft.category_scores.art, null)
+      assert.equal(images.find((image) => image.hash === hashes[0]).saved_date, "2024-02-08")
+      assert.equal(Buffer.from(store.getImage(hashes[1]).bytes).toString(), "incomplete")
+      assert.deepEqual(store.db.prepare("PRAGMA foreign_key_check").all(), [])
+      assert.throws(() => store.setClassification(hashes[1], "incomplete"), /Invalid classification/)
+      assert.deepEqual(store.save(), { results: 1 })
+    } finally {
+      store.close()
+    }
+    const reopened = openStore(databasePath, exportPath)
+    try {
+      assert.equal(reopened.listImages().find((image) => image.hash === hashes[1]).classification,
+        "scoresheet")
+    } finally {
+      reopened.close()
+    }
+  } finally {
     rmSync(directory, { recursive: true, force: true })
   }
 })

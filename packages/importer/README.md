@@ -11,4 +11,4 @@ npm ci
 npm run dev:importer
 ```
 
-Open the localhost URL printed by Vite. Import a ZIP, classify images, and record results for complete single-image score sheets. The app stores imports and work in `packages/importer/.local/importer.sqlite`; this file is ignored by Git. **Save** updates SQLite and `packages/data/data.json`. Grouping incomplete score sheets is not implemented yet.
+Open the localhost URL printed by Vite. Import a ZIP, classify images, and record scoresheet results. The app stores imports and work in `packages/importer/.local/importer.sqlite`; this file is ignored by Git. **Save** updates SQLite and `packages/data/data.json`.

@@ -10,7 +10,7 @@ type Image = {
   hash: string
   filename: string
   mime: string
-  classification: "complete" | "incomplete" | "other" | null
+  classification: "scoresheet" | "other" | null
   timestamp_ms: number | null
   draft: Draft | null
   notes: string
@@ -22,7 +22,7 @@ type State = {
   results: number
   lastImport: { filename: string; images: number } | null
 }
-type ImageFilter = "needs-review" | "all" | "unclassified" | "complete" | "incomplete" | "other"
+type ImageFilter = "unclassified" | "scoresheet" | "other" | "unreviewed" | "reviewed"
 
 const categories = [
   "history", "geography", "science", "sport", "music", "art", "guest",
@@ -31,7 +31,7 @@ const categories = [
 const app = document.querySelector<HTMLDivElement>("#app")!
 let state: State = { imports: 0, images: [], results: 0, lastImport: null }
 let selectedHash: string | null = null
-let imageFilter: ImageFilter = "needs-review"
+let imageFilter: ImageFilter = "unreviewed"
 let filenameQuery = ""
 let draftTimer: number | undefined
 let notesTimer: number | undefined
@@ -53,12 +53,11 @@ function status(text: string, error = false) {
 }
 
 function matchesFilter(image: Image, filter: ImageFilter) {
-  if (filter === "all") return true
   if (filter === "unclassified") return image.classification === null
-  if (filter === "needs-review") {
-    return image.classification === null || image.classification === "incomplete" ||
-      (image.classification === "complete" && !image.saved_date)
-  }
+  if (filter === "unreviewed") return image.classification === null ||
+    (image.classification === "scoresheet" && !image.saved_date)
+  if (filter === "reviewed") return image.classification === "other" ||
+    (image.classification === "scoresheet" && !!image.saved_date)
   return image.classification === filter
 }
 
@@ -187,7 +186,7 @@ async function moveSelection(direction: -1 | 1) {
   if (nextIndex !== index) await selectImage(visible[nextIndex].hash)
 }
 
-async function classify(value: "complete" | "incomplete" | "other") {
+async function classify(value: "scoresheet" | "other" | null) {
   if (!selectedHash) return
   const visible = visibleImages()
   const next = visible[visible.findIndex((item) => item.hash === selectedHash) + 1]?.hash
@@ -260,12 +259,11 @@ function render() {
   })
   const summaries = app.querySelector<HTMLElement>("#category-summary")!
   const summaryItems = [
-    { filter: "needs-review", label: "Needs review" },
-    { filter: "all", label: "All images" },
     { filter: "unclassified", label: "Unclassified" },
-    { filter: "complete", label: "Complete score sheets" },
-    { filter: "incomplete", label: "Incomplete score sheets" },
+    { filter: "scoresheet", label: "Scoresheet" },
     { filter: "other", label: "Other" },
+    { filter: "unreviewed", label: "Unreviewed" },
+    { filter: "reviewed", label: "Reviewed" },
   ] as const
   for (const item of summaryItems) {
     const button = document.createElement("button")
@@ -299,20 +297,15 @@ function render() {
     download.textContent = "Open or download image"
     preview.append(download)
     editor.innerHTML = `<h2>Classify</h2><div id="classify"></div>`
-    for (const [value, text] of [["complete", "Complete score sheet"], ["incomplete", "Incomplete score sheet"], ["other", "Other"]] as const) {
+    for (const [value, text] of [[null, "Unclassified"], ["scoresheet", "Scoresheet"], ["other", "Other"]] as const) {
       const button = document.createElement("button")
       button.textContent = text
       button.className = selected.classification === value ? "active" : ""
       button.addEventListener("click", () => classify(value))
       editor.querySelector("#classify")!.append(button)
     }
-    if (selected.classification === "complete") renderRecordForm(editor, selected)
-    if (selected.classification === "incomplete") {
-      const note = document.createElement("p")
-      note.textContent = "Grouping incomplete images is the next implementation step."
-      editor.append(note)
-    }
-    if (selected.classification === "complete" || selected.classification === "incomplete") {
+    if (selected.classification === "scoresheet") renderRecordForm(editor, selected)
+    if (selected.classification === "scoresheet") {
       const section = document.createElement("section")
       section.className = "notes-section"
       const label = document.createElement("label")
@@ -345,7 +338,7 @@ function renderImageItems() {
   for (const image of visible) {
     const button = document.createElement("button")
     button.className = `image-item ${image.hash === selectedHash ? "selected" : ""}`
-    button.textContent = `${filename(image.filename)}\n${image.timestamp_ms === null ? "Unknown date" : new Date(image.timestamp_ms).toLocaleString()}\n${image.classification || "Unclassified"}${image.saved_date ? " · saved" : ""}`
+    button.textContent = `${filename(image.filename)}\n${image.timestamp_ms === null ? "Unknown date" : new Date(image.timestamp_ms).toLocaleString()}\n${image.classification === "scoresheet" ? "Scoresheet" : image.classification === "other" ? "Other" : "Unclassified"}${image.saved_date ? " · saved" : ""}`
     button.addEventListener("click", () => selectImage(image.hash))
     list.append(button)
   }

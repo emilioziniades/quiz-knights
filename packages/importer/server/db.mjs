@@ -31,7 +31,7 @@ const schema = `
     hash TEXT PRIMARY KEY,
     mime TEXT NOT NULL,
     bytes BLOB NOT NULL,
-    classification TEXT CHECK (classification IN ('complete', 'incomplete', 'other'))
+    classification TEXT CHECK (classification IN ('scoresheet', 'other'))
   );
   CREATE TABLE IF NOT EXISTS image_occurrences (
     import_id INTEGER NOT NULL REFERENCES imports(id),
@@ -69,6 +69,35 @@ function withTransaction(db, action) {
   }
 }
 
+function migrateLegacyClassifications(db) {
+  const definition = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'images'").get()?.sql
+  if (!definition?.includes("'incomplete'")) return
+
+  db.exec("PRAGMA foreign_keys = OFF")
+  try {
+    withTransaction(db, () => db.exec(`
+      CREATE TABLE images_migrated (
+        hash TEXT PRIMARY KEY,
+        mime TEXT NOT NULL,
+        bytes BLOB NOT NULL,
+        classification TEXT CHECK (classification IN ('scoresheet', 'other'))
+      );
+      INSERT INTO images_migrated (hash, mime, bytes, classification)
+        SELECT hash, mime, bytes,
+          CASE WHEN classification IN ('complete', 'incomplete') THEN 'scoresheet'
+               ELSE classification END
+        FROM images;
+      DROP TABLE images;
+      ALTER TABLE images_migrated RENAME TO images;
+    `))
+  } finally {
+    db.exec("PRAGMA foreign_keys = ON")
+  }
+  if (db.prepare("PRAGMA foreign_key_check").get()) {
+    throw new Error("Image classification migration broke a database reference")
+  }
+}
+
 function validateRecord(value) {
   if (!value || typeof value !== "object") throw new Error("Result is required")
   const date = value.date
@@ -98,6 +127,14 @@ function validateRecord(value) {
   }
 }
 
+function hasAllRecordFields(value) {
+  return typeof value?.date === "string" && value.date !== "" &&
+    categories.every((name) => typeof value.category_scores?.[name] === "number") &&
+    typeof value.double_up_category === "string" && value.double_up_category !== "" &&
+    Array.isArray(value.round_position) && value.round_position.length === 5 &&
+    value.round_position.every((position) => typeof position === "number")
+}
+
 export function imageHash(bytes) {
   return createHash("sha256").update(bytes).digest("hex")
 }
@@ -107,6 +144,7 @@ export function openStore(databasePath, exportPath) {
   const db = new DatabaseSync(databasePath)
   db.exec("PRAGMA journal_mode = WAL")
   db.exec(schema)
+  migrateLegacyClassifications(db)
 
   if (!db.prepare("SELECT 1 FROM settings WHERE key = 'seeded'").get()) {
     const initial = existsSync(exportPath) ? JSON.parse(readFileSync(exportPath, "utf8")) : []
@@ -161,10 +199,10 @@ export function openStore(databasePath, exportPath) {
       }
     },
     setClassification(hash, classification) {
-      if (!["complete", "incomplete", "other"].includes(classification)) {
+      if (classification !== null && !["scoresheet", "other"].includes(classification)) {
         throw new Error("Invalid classification")
       }
-      if (classification !== "complete" &&
+      if (classification !== "scoresheet" &&
           db.prepare("SELECT 1 FROM results WHERE sheet_id = ?").get(hash)) {
         throw new Error("This image has a saved result; change or remove that result first")
       }
@@ -194,12 +232,15 @@ export function openStore(databasePath, exportPath) {
     },
     save() {
       const drafts = db.prepare(`
-        SELECT d.sheet_id, d.payload, i.classification
+        SELECT d.sheet_id, d.payload, r.date AS saved_date
         FROM drafts d JOIN images i ON i.hash = d.sheet_id
-        WHERE i.classification = 'complete'
+        LEFT JOIN results r ON r.sheet_id = d.sheet_id
+        WHERE i.classification = 'scoresheet'
       `).all()
-      const ready = drafts.map(({ sheet_id, payload }) => {
-        return { sheetId: sheet_id, record: validateRecord(JSON.parse(payload)) }
+      const ready = drafts.flatMap(({ sheet_id, payload, saved_date }) => {
+        const draft = JSON.parse(payload)
+        if (!saved_date && !hasAllRecordFields(draft)) return []
+        return [{ sheetId: sheet_id, record: validateRecord(draft) }]
       })
 
       withTransaction(db, () => {
