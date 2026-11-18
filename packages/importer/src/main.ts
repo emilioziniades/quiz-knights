@@ -231,7 +231,6 @@ function render() {
       <label class="import-button">Import chat history ZIP<input id="zip" type="file" accept=".zip" hidden></label>
       <button id="save" type="button">Save</button>
     </header>
-    <p id="current-image"><strong>Current image:</strong> <span id="current-filename"></span></p>
     <p id="import-notice"></p>
     <p id="status" role="status"></p>
     <main><aside id="list">
@@ -240,7 +239,9 @@ function render() {
         <input id="filename-search" type="search" aria-label="Search image filenames" placeholder="Search filenames" autocomplete="off">
       </div>
       <div id="image-items"></div>
-    </aside><section id="preview"></section><aside id="editor"></aside></main>`
+    </aside><section id="preview">
+      <p id="current-image"><strong>Current image:</strong> <span id="current-filename"></span></p>
+    </section><aside id="editor"></aside></main>`
   app.querySelector<HTMLInputElement>("#filename-search")!.value = filenameQuery
   app.querySelector<HTMLInputElement>("#filename-search")!.addEventListener("input", (event) => {
     filenameQuery = (event.target as HTMLInputElement).value
@@ -275,7 +276,7 @@ function render() {
   renderImageItems()
   const preview = app.querySelector<HTMLElement>("#preview")!
   const editor = app.querySelector<HTMLElement>("#editor")!
-  if (!selected) preview.textContent = "Import a WhatsApp ZIP to begin."
+  if (!selected) preview.append("Import a WhatsApp ZIP to begin.")
   else {
     const image = document.createElement("img")
     image.src = `/api/images/${selected.hash}`
