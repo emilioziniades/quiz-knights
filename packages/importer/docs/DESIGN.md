@@ -42,7 +42,7 @@ If a result already exists for the quiz date, accept an identical recording and 
 
 ## Local data and identity
 
-The local SQLite database stores imported transcript entries, attachment bytes and metadata, ZIP import history, classifications, notes, draft recordings, processing responses if automation is added, and approved results. The original ZIP is not needed after a successful import. Keep the database local; it is not part of the Netlify deployment.
+The local SQLite database stores imported transcript entries, attachment bytes and metadata, ZIP import history, classifications, image rotation in degrees, notes, draft recordings, processing responses if automation is added, and approved results. Rotation changes the preview without changing the stored image bytes. The original ZIP is not needed after a successful import. Keep the database local; it is not part of the Netlify deployment.
 
 Use the SHA-256 hash of an image's contents to recognize it across ZIPs. Keep its occurrences in chat separate so repeated attachments can retain their dates and message context. Key a recording by its image hash. Reusing an image must not trigger another classification or overwrite a manual decision; reprocessing should require an explicit action.
 

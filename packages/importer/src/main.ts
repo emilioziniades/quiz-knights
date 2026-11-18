@@ -11,6 +11,7 @@ type Image = {
   filename: string
   mime: string
   classification: "scoresheet" | "other" | null
+  rotation_degrees: number
   timestamp_ms: number | null
   draft: Draft | null
   notes: string
@@ -36,6 +37,9 @@ let filenameQuery = ""
 let draftTimer: number | undefined
 let notesTimer: number | undefined
 let keyboardNavigation = Promise.resolve()
+let rotationQueue = Promise.resolve()
+let previewResizeObserver: ResizeObserver | null = null
+let fitPreviewImage: (() => void) | null = null
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options)
@@ -185,6 +189,23 @@ async function moveSelection(direction: -1 | 1) {
   if (nextIndex !== index) await selectImage(visible[nextIndex].hash)
 }
 
+function rotateImage(delta: -90 | 90) {
+  const hash = selectedHash
+  if (!hash) return
+  rotationQueue = rotationQueue.then(async () => {
+    const current = state.images.find((image) => image.hash === hash)
+    if (!current) return
+    const degrees = (current.rotation_degrees + delta + 360) % 360
+    await api(`/api/images/${hash}/rotation`, {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rotation_degrees: degrees }),
+    })
+    const latest = state.images.find((image) => image.hash === hash)
+    if (latest) latest.rotation_degrees = degrees
+    if (selectedHash === hash) fitPreviewImage?.()
+  }).catch((error) => status((error as Error).message, true))
+}
+
 async function classify(value: "scoresheet" | "other" | null) {
   if (!selectedHash) return
   const visible = visibleImages()
@@ -234,6 +255,8 @@ async function save() {
 }
 
 function render() {
+  previewResizeObserver?.disconnect()
+  fitPreviewImage = null
   const selected = state.images.find((image) => image.hash === selectedHash)
   app.innerHTML = `
     <header><h1>Quiz Knights importer</h1>
@@ -249,7 +272,13 @@ function render() {
       </div>
       <div id="image-items"></div>
     </aside><section id="preview">
-      <p id="current-image"><strong>Current image:</strong> <span id="current-filename"></span></p>
+      <div id="current-image">
+        <span class="current-image-label"><strong>Current image:</strong> <span id="current-filename"></span></span>
+        <span class="rotation-controls">
+          <button id="rotate-left" type="button" aria-label="Rotate image left 90 degrees" title="Rotate left 90°">↶</button>
+          <button id="rotate-right" type="button" aria-label="Rotate image right 90 degrees" title="Rotate right 90°">↷</button>
+        </span>
+      </div>
     </section><aside id="editor"></aside></main>`
   app.querySelector<HTMLInputElement>("#filename-search")!.value = filenameQuery
   app.querySelector<HTMLInputElement>("#filename-search")!.addEventListener("input", (event) => {
@@ -276,6 +305,11 @@ function render() {
     summaries.append(button)
   }
   app.querySelector<HTMLElement>("#current-filename")!.textContent = selected ? filename(selected.filename) : "None selected"
+  for (const [id, delta] of [["rotate-left", -90], ["rotate-right", 90]] as const) {
+    const button = app.querySelector<HTMLButtonElement>(`#${id}`)!
+    button.disabled = !selected
+    button.addEventListener("click", () => rotateImage(delta))
+  }
   if (state.lastImport?.images === 0) {
     const notice = app.querySelector<HTMLElement>("#import-notice")!
     notice.textContent = `The last ZIP (${state.lastImport.filename}) contained no image attachments. Export the WhatsApp chat with media and select that ZIP.`
@@ -286,10 +320,32 @@ function render() {
   const editor = app.querySelector<HTMLElement>("#editor")!
   if (!selected) preview.append("Import a WhatsApp ZIP to begin.")
   else {
+    const stage = document.createElement("div")
+    stage.className = "image-stage"
+    const frame = document.createElement("div")
+    frame.className = "image-frame"
     const image = document.createElement("img")
-    image.src = `/api/images/${selected.hash}`
     image.alt = "Selected chat image"
-    preview.append(image)
+    frame.append(image)
+    stage.append(frame)
+    preview.append(stage)
+    const fit = () => {
+      if (!image.naturalWidth || !image.naturalHeight || !stage.clientWidth || !stage.clientHeight) return
+      const quarterTurn = selected.rotation_degrees % 180 !== 0
+      const width = quarterTurn ? image.naturalHeight : image.naturalWidth
+      const height = quarterTurn ? image.naturalWidth : image.naturalHeight
+      const scale = Math.min(1, stage.clientWidth / width, stage.clientHeight / height)
+      frame.style.width = `${width * scale}px`
+      frame.style.height = `${height * scale}px`
+      image.style.width = `${image.naturalWidth * scale}px`
+      image.style.height = `${image.naturalHeight * scale}px`
+      image.style.transform = `translate(-50%, -50%) rotate(${selected.rotation_degrees}deg)`
+    }
+    fitPreviewImage = fit
+    image.addEventListener("load", fit)
+    previewResizeObserver = new ResizeObserver(fit)
+    previewResizeObserver.observe(stage)
+    image.src = `/api/images/${selected.hash}`
     const download = document.createElement("a")
     download.href = image.src
     download.download = selected.hash

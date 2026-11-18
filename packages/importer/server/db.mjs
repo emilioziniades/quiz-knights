@@ -31,7 +31,8 @@ const schema = `
     hash TEXT PRIMARY KEY,
     mime TEXT NOT NULL,
     bytes BLOB NOT NULL,
-    classification TEXT CHECK (classification IN ('scoresheet', 'other'))
+    classification TEXT CHECK (classification IN ('scoresheet', 'other')),
+    rotation_degrees INTEGER NOT NULL DEFAULT 0 CHECK (rotation_degrees IN (0, 90, 180, 270))
   );
   CREATE TABLE IF NOT EXISTS image_occurrences (
     import_id INTEGER NOT NULL REFERENCES imports(id),
@@ -80,7 +81,8 @@ function migrateLegacyClassifications(db) {
         hash TEXT PRIMARY KEY,
         mime TEXT NOT NULL,
         bytes BLOB NOT NULL,
-        classification TEXT CHECK (classification IN ('scoresheet', 'other'))
+        classification TEXT CHECK (classification IN ('scoresheet', 'other')),
+        rotation_degrees INTEGER NOT NULL DEFAULT 0 CHECK (rotation_degrees IN (0, 90, 180, 270))
       );
       INSERT INTO images_migrated (hash, mime, bytes, classification)
         SELECT hash, mime, bytes,
@@ -145,6 +147,9 @@ export function openStore(databasePath, exportPath) {
   db.exec("PRAGMA journal_mode = WAL")
   db.exec(schema)
   migrateLegacyClassifications(db)
+  if (!db.prepare("PRAGMA table_info(images)").all().some((column) => column.name === "rotation_degrees")) {
+    db.exec("ALTER TABLE images ADD COLUMN rotation_degrees INTEGER NOT NULL DEFAULT 0 CHECK (rotation_degrees IN (0, 90, 180, 270))")
+  }
 
   if (!db.prepare("SELECT 1 FROM settings WHERE key = 'seeded'").get()) {
     const initial = existsSync(exportPath) ? JSON.parse(readFileSync(exportPath, "utf8")) : []
@@ -164,7 +169,7 @@ export function openStore(databasePath, exportPath) {
     close: () => db.close(),
     listImages() {
       return db.prepare(`
-        SELECT i.hash, i.mime, i.classification,
+        SELECT i.hash, i.mime, i.classification, i.rotation_degrees,
                MIN(o.timestamp_ms) AS timestamp_ms,
                (SELECT archive_path FROM image_occurrences
                 WHERE image_hash = i.hash
@@ -208,6 +213,12 @@ export function openStore(databasePath, exportPath) {
       }
       const outcome = db.prepare("UPDATE images SET classification = ? WHERE hash = ?")
         .run(classification, hash)
+      if (!outcome.changes) throw new Error("Image not found")
+    },
+    setRotation(hash, degrees) {
+      if (![0, 90, 180, 270].includes(degrees)) throw new Error("Invalid image rotation")
+      const outcome = db.prepare("UPDATE images SET rotation_degrees = ? WHERE hash = ?")
+        .run(degrees, hash)
       if (!outcome.changes) throw new Error("Image not found")
     },
     setDraft(hash, payload) {

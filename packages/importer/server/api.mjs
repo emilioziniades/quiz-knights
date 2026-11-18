@@ -66,6 +66,11 @@ export function createApi() {
         store.setClassification(classification[1], body.classification)
         return json(response, 200, { ok: true })
       }
+      const rotation = path.match(/^\/images\/([a-f0-9]{64})\/rotation$/)
+      if (method === "PUT" && rotation) {
+        store.setRotation(rotation[1], (await readJson(request)).rotation_degrees)
+        return json(response, 200, { ok: true })
+      }
       const draft = path.match(/^\/drafts\/([a-f0-9]{64})$/)
       if (method === "PUT" && draft) {
         store.setDraft(draft[1], await readJson(request))

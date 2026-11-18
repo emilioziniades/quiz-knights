@@ -64,6 +64,8 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
       { skipped: false, newImages: 1, images: 1, messages: 1 })
     const hash = imageHash(firstImage)
     store.setClassification(hash, "scoresheet")
+    store.setRotation(hash, 90)
+    assert.throws(() => store.setRotation(hash, 45), /Invalid image rotation/)
     store.setDraft(hash, record("2024-02-08"))
     store.setNotes(hash, "12th place out of 30, confirmed in chat")
     assert.deepEqual(store.save(), { results: 2 })
@@ -85,6 +87,7 @@ test("keeps decisions across overlapping ZIP imports and exports saved results",
     assert.equal(store.counts().imports, 2)
     assert.equal(store.counts().images, 2)
     assert.equal(store.listImages().find((image) => image.hash === hash).classification, "scoresheet")
+    assert.equal(store.listImages().find((image) => image.hash === hash).rotation_degrees, 90)
     assert.equal(store.listImages().find((image) => image.hash === hash).filename, "IMG-1.jpg")
     assert.equal(store.db.prepare("SELECT COUNT(*) AS count FROM image_occurrences WHERE image_hash = ?")
       .get(hash).count, 2)
@@ -191,6 +194,7 @@ test("migrates legacy classifications without losing notes, drafts, or results",
       assert.deepEqual(hashes.map((hash) => images.find((image) => image.hash === hash).classification),
         ["scoresheet", "scoresheet", "other"])
       assert.equal(images.find((image) => image.hash === hashes[1]).notes, "12th out of 30")
+      assert.equal(images.find((image) => image.hash === hashes[1]).rotation_degrees, 0)
       assert.equal(images.find((image) => image.hash === hashes[1]).filename, "partial.jpg")
       assert.equal(images.find((image) => image.hash === hashes[1]).draft.category_scores.art, null)
       assert.equal(images.find((image) => image.hash === hashes[0]).saved_date, "2024-02-08")
@@ -205,6 +209,38 @@ test("migrates legacy classifications without losing notes, drafts, or results",
     try {
       assert.equal(reopened.listImages().find((image) => image.hash === hashes[1]).classification,
         "scoresheet")
+    } finally {
+      reopened.close()
+    }
+  } finally {
+    rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test("adds persistent rotation to an existing image database", () => {
+  const directory = mkdtempSync(join(tmpdir(), "quiz-knights-importer-"))
+  const databasePath = join(directory, "importer.sqlite")
+  const hash = imageHash(strToU8("image"))
+  const existing = new DatabaseSync(databasePath)
+  try {
+    existing.exec(`CREATE TABLE images (
+      hash TEXT PRIMARY KEY, mime TEXT NOT NULL, bytes BLOB NOT NULL,
+      classification TEXT CHECK (classification IN ('scoresheet', 'other'))
+    )`)
+    existing.prepare("INSERT INTO images VALUES (?, ?, ?, ?)")
+      .run(hash, "image/jpeg", strToU8("image"), "scoresheet")
+  } finally {
+    existing.close()
+  }
+
+  try {
+    const store = openStore(databasePath, join(directory, "data.json"))
+    assert.equal(store.listImages()[0].rotation_degrees, 0)
+    store.setRotation(hash, 270)
+    store.close()
+    const reopened = openStore(databasePath, join(directory, "data.json"))
+    try {
+      assert.equal(reopened.listImages()[0].rotation_degrees, 270)
     } finally {
       reopened.close()
     }

@@ -7,7 +7,11 @@ header { display: flex; gap: 1rem; align-items: center; padding: 1rem; backgroun
 h1 { font-size: 1.25rem; margin: 0 auto 0 0; }
 h2 { font-size: 1rem; margin: 0.5rem 0; }
 #status, #import-notice { margin: 0; padding: 0.4rem 1rem; }
-#current-image { align-self: stretch; margin: 0; padding: 0.5rem 0.75rem; background: #e9f2fd; overflow-wrap: anywhere; }
+#current-image { align-self: stretch; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 0; padding: 0.5rem 0.75rem; background: #e9f2fd; }
+.current-image-label { min-width: 0; overflow-wrap: anywhere; }
+.rotation-controls { display: flex; flex: none; gap: 0.25rem; }
+.rotation-controls button { width: 2rem; height: 2rem; padding: 0; border: 1px solid #667483; border-radius: 4px; background: white; font-size: 1.4rem; line-height: 1; }
+.rotation-controls button:disabled { opacity: 0.5; cursor: default; }
 #import-notice:empty { display: none; }
 #status { min-height: 2rem; color: #245a37; }
 #status.error, #import-notice.error { color: #a02626; }
@@ -25,8 +29,10 @@ main > * { overflow: auto; padding: 1rem; }
 .image-list-heading input { width: 100%; margin-top: 0.5rem; padding: 0.5rem; border: 1px solid #667483; border-radius: 4px; }
 .image-item { display: block; width: 100%; margin-bottom: 0.4rem; padding: 0.6rem; text-align: left; white-space: pre-line; overflow-wrap: anywhere; background: white; border: 1px solid #ccd1d8; border-radius: 4px; }
 .image-item.selected, #classify .active { border-color: #2865aa; background: #e9f2fd; }
-#preview { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
-#preview img { max-width: 100%; max-height: calc(100vh - 12rem); object-fit: contain; }
+#preview { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; min-height: 0; }
+.image-stage { display: grid; flex: 1; min-height: 0; width: 100%; place-items: center; overflow: hidden; }
+.image-frame { position: relative; flex: none; }
+.image-frame img { position: absolute; top: 50%; left: 50%; transform-origin: center; }
 #editor { background: white; border-left: 1px solid #ccd1d8; }
 #classify { display: grid; gap: 0.35rem; }
 #classify button { padding: 0.5rem; text-align: left; border: 1px solid #ccd1d8; border-radius: 4px; background: white; }
