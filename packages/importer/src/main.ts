@@ -261,7 +261,7 @@ function render() {
   app.innerHTML = `
     <header><h1>Quiz Knights importer</h1>
       <label class="import-button">Import chat history ZIP<input id="zip" type="file" accept=".zip" hidden></label>
-      <button id="save" type="button">Save</button>
+      <button id="save" type="button" title="Save (⌘/Ctrl+Enter)">Save</button>
     </header>
     <p id="import-notice"></p>
     <p id="status" role="status"></p>
@@ -442,6 +442,11 @@ function renderRecordForm(editor: HTMLElement, image: Image) {
 }
 
 document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && (event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey) {
+    event.preventDefault()
+    if (!event.repeat) void save()
+    return
+  }
   if (event.altKey || event.ctrlKey || event.metaKey) return
   const target = event.target
   if (target instanceof HTMLElement &&
