@@ -6,7 +6,7 @@ Build a local web app to record Quiz Knights results from exported WhatsApp chat
 
 A local SQLite database is the source of truth. Opening the app should show previously imported images, decisions, and results without requiring a ZIP file.
 
-This document describes the intended workflow. The current importer app is only a Hello World starter.
+This document describes the intended workflow. The first implementation supports ZIP imports, persistent classification, recording complete single-image sheets, and saving results. Grouping incomplete sheets remains to be implemented.
 
 ## Input
 

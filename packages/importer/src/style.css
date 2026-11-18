@@ -1,0 +1,26 @@
+:root { font-family: system-ui, sans-serif; color: #18212b; background: #f5f6f8; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input, select { font: inherit; }
+button, .import-button { cursor: pointer; }
+header { display: flex; gap: 1rem; align-items: center; padding: 1rem; background: white; border-bottom: 1px solid #ccd1d8; }
+h1 { font-size: 1.25rem; margin: 0 auto 0 0; }
+h2 { font-size: 1rem; margin: 0.5rem 0; }
+#summary, #status { margin: 0; padding: 0.4rem 1rem; }
+#status { min-height: 2rem; color: #245a37; }
+#status.error { color: #a02626; }
+.import-button, header button { border: 1px solid #667483; border-radius: 4px; padding: 0.5rem 0.75rem; background: #f7f9fb; }
+main { display: grid; grid-template-columns: 15rem minmax(20rem, 1fr) 20rem; height: calc(100vh - 8rem); min-height: 25rem; border-top: 1px solid #ccd1d8; }
+main > * { overflow: auto; padding: 1rem; }
+#list { background: white; border-right: 1px solid #ccd1d8; }
+.image-item { display: block; width: 100%; margin-bottom: 0.4rem; padding: 0.6rem; text-align: left; white-space: pre-line; background: white; border: 1px solid #ccd1d8; border-radius: 4px; }
+.image-item.selected, #classify .active { border-color: #2865aa; background: #e9f2fd; }
+#preview { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+#preview img { max-width: 100%; max-height: calc(100vh - 12rem); object-fit: contain; }
+#editor { background: white; border-left: 1px solid #ccd1d8; }
+#classify { display: grid; gap: 0.35rem; }
+#classify button { padding: 0.5rem; text-align: left; border: 1px solid #ccd1d8; border-radius: 4px; background: white; }
+#record-form label { display: flex; justify-content: space-between; gap: 0.5rem; align-items: center; margin: 0.35rem 0; }
+#record-form input, #record-form select { max-width: 8rem; padding: 0.25rem; }
+fieldset { border: 1px solid #ccd1d8; margin: 0.8rem 0; }
+@media (max-width: 850px) { main { grid-template-columns: 10rem minmax(0, 1fr); } #editor { grid-column: 1 / -1; border-top: 1px solid #ccd1d8; } }
