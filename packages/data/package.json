@@ -1,0 +1,9 @@
+{
+  "name": "@quiz-knights/data",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./data.json": "./data.json"
+  }
+}

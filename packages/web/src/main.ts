@@ -7,7 +7,7 @@ import {
   renderTotalPointsOverTime,
 } from "./charts.ts";
 import roundTable from "./roundTable.png";
-import data from "./data.json";
+import data from "@quiz-knights/data/data.json";
 import { Data } from "./types.ts";
 import { DateTime } from "luxon";
 

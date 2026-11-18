@@ -4,7 +4,7 @@
 
 An incredibly simple single page site with the purpose of displaying statistics about the Quiz Knights, a pub quiz team at the Forester's Arms, Cape Town, South Africa.
 
-The web app lives in `packages/web`. Its data is stored in `packages/web/src/data.json`, because who has time for databases?
+The web app lives in `packages/web`. Quiz results live in the shared `packages/data/data.json` package, because who has time for databases?
 
 Install Node.js 21 (or run `nix develop`), then install all workspace dependencies from the repository root:
 
