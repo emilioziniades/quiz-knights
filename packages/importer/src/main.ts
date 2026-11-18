@@ -202,7 +202,11 @@ function rotateImage(delta: -90 | 90) {
     })
     const latest = state.images.find((image) => image.hash === hash)
     if (latest) latest.rotation_degrees = degrees
-    if (selectedHash === hash) fitPreviewImage?.()
+    if (selectedHash === hash) {
+      fitPreviewImage?.()
+      const thumbnail = app.querySelector<HTMLImageElement>(".image-item.selected .image-thumbnail img")
+      if (thumbnail) thumbnail.style.transform = `rotate(${degrees}deg)`
+    }
   }).catch((error) => status((error as Error).message, true))
 }
 
@@ -393,7 +397,19 @@ function renderImageItems() {
   for (const image of visible) {
     const button = document.createElement("button")
     button.className = `image-item ${image.hash === selectedHash ? "selected" : ""}`
-    button.textContent = `${filename(image.filename)}\n${image.timestamp_ms === null ? "Unknown date" : new Date(image.timestamp_ms).toLocaleString()}\n${image.classification === "scoresheet" ? "Scoresheet" : image.classification === "other" ? "Other" : "Unclassified"}${image.saved_date ? " · saved" : ""}`
+    const thumbnail = document.createElement("span")
+    thumbnail.className = "image-thumbnail"
+    const preview = document.createElement("img")
+    preview.src = `/api/images/${image.hash}`
+    preview.alt = ""
+    preview.loading = "lazy"
+    preview.decoding = "async"
+    preview.style.transform = `rotate(${image.rotation_degrees}deg)`
+    thumbnail.append(preview)
+    const details = document.createElement("span")
+    details.className = "image-item-details"
+    details.textContent = `${filename(image.filename)}\n${image.timestamp_ms === null ? "Unknown date" : new Date(image.timestamp_ms).toLocaleString()}\n${image.classification === "scoresheet" ? "Scoresheet" : image.classification === "other" ? "Other" : "Unclassified"}${image.saved_date ? " · saved" : ""}`
+    button.append(thumbnail, details)
     button.addEventListener("click", () => selectImage(image.hash))
     list.append(button)
   }
