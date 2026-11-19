@@ -13,7 +13,13 @@ import { DateTime } from "luxon";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
-      <h1>The Quiz Knights</h1>
+      <h1>The Round Table</h1>
+      <ul class="name-history">
+        <li><strong>The Quiz Knights</strong> (31 Jan 2024 – 15 Dec 2025)</li>
+        <li><strong>Victorious Secret</strong> (15 Dec 2025 – 14 Nov 2026)</li>
+        <li><strong>We have a difficult relationship with Singapore</strong> (14 Nov 2026 – now)</li>
+      </ul>
+      <br/>
       <img id="roundTable" alt="The Round Table"/>
       <p id="summaryMessage"> </p>
       <h2>Average Points Per Category</h2>
