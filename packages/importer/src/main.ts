@@ -258,6 +258,9 @@ async function save() {
     await persistEdits()
     const result = await api<{ results: number }>("/api/save", { method: "POST" })
     await refresh(selectedHash)
+    const editor = app.querySelector<HTMLElement>("#editor")!
+    const focusTarget = editor.querySelector<HTMLElement>("#record-form") ?? editor
+    focusTarget.focus({ preventScroll: true })
     status(`Saved ${result.results} results to SQLite and packages/data`)
   } catch (error) {
     const failure = error as Error & { sheetId?: string }
@@ -299,7 +302,7 @@ function render() {
           </span>
         </div>
       </div>
-    </section><aside id="editor"></aside></main>`
+    </section><aside id="editor" tabindex="-1"></aside></main>`
   app.querySelector<HTMLInputElement>("#filename-search")!.value = filenameQuery
   app.querySelector<HTMLInputElement>("#filename-search")!.addEventListener("input", (event) => {
     filenameQuery = (event.target as HTMLInputElement).value
@@ -501,6 +504,7 @@ function renderRecordForm(editor: HTMLElement, image: Image) {
   const draft = image.draft
   const form = document.createElement("form")
   form.id = "record-form"
+  form.tabIndex = -1
   form.innerHTML = `<h2>Record result</h2><label>Date <input name="date" type="date"></label>
     <fieldset id="scores"><legend>Category scores (0–5)</legend></fieldset>
     <label>Double-up <select name="double_up_category"></select></label>
