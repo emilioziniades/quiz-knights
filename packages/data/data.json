@@ -228,5 +228,1822 @@
       17,
       16
     ]
+  },
+  {
+    "date": "2024-04-18",
+    "category_scores": {
+      "history": 2,
+      "geography": 2,
+      "science": 4,
+      "sport": 2,
+      "music": 4,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      12,
+      13,
+      4,
+      7,
+      9
+    ]
+  },
+  {
+    "date": "2024-05-02",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 4,
+      "sport": 2,
+      "music": 3.5,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 1,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "current_affairs",
+    "round_position": [
+      7,
+      14,
+      7,
+      8,
+      8
+    ]
+  },
+  {
+    "date": "2024-05-09",
+    "category_scores": {
+      "history": 2,
+      "geography": 0,
+      "science": 3,
+      "sport": 1,
+      "music": 3,
+      "art": 1,
+      "guest": 4,
+      "current_affairs": 3.5,
+      "general_knowledge": 1,
+      "film": 1
+    },
+    "double_up_category": "general_knowledge",
+    "round_position": [
+      29,
+      27,
+      26,
+      25,
+      28
+    ]
+  },
+  {
+    "date": "2024-05-30",
+    "category_scores": {
+      "history": 4,
+      "geography": 2,
+      "science": 3,
+      "sport": 1,
+      "music": 2,
+      "art": 3,
+      "guest": 2,
+      "current_affairs": 1,
+      "general_knowledge": 5,
+      "film": 4
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      9,
+      23,
+      25,
+      17,
+      19
+    ]
+  },
+  {
+    "date": "2024-06-13",
+    "category_scores": {
+      "history": 2,
+      "geography": 2.5,
+      "science": 3,
+      "sport": 2,
+      "music": 4,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 2
+    },
+    "double_up_category": "sport",
+    "round_position": [
+      19,
+      8,
+      4,
+      4,
+      7
+    ]
+  },
+  {
+    "date": "2024-06-20",
+    "category_scores": {
+      "history": 2,
+      "geography": 2,
+      "science": 2,
+      "sport": 4,
+      "music": 4,
+      "art": 1.5,
+      "guest": 4,
+      "current_affairs": 5,
+      "general_knowledge": 4,
+      "film": 2
+    },
+    "double_up_category": "music",
+    "round_position": [
+      22,
+      21,
+      10,
+      10,
+      15
+    ]
+  },
+  {
+    "date": "2024-06-27",
+    "category_scores": {
+      "history": 3,
+      "geography": 3,
+      "science": 2,
+      "sport": 2,
+      "music": 4,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 1,
+      "general_knowledge": 3,
+      "film": 4.5
+    },
+    "double_up_category": "music",
+    "round_position": [
+      12,
+      22,
+      5,
+      9,
+      8
+    ]
+  },
+  {
+    "date": "2024-07-04",
+    "category_scores": {
+      "history": 1,
+      "geography": 3,
+      "science": 3,
+      "sport": 1,
+      "music": 1,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 4,
+      "general_knowledge": 2,
+      "film": 1
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      22,
+      26,
+      28,
+      13,
+      22
+    ]
+  },
+  {
+    "date": "2024-07-11",
+    "category_scores": {
+      "history": 1,
+      "geography": 2,
+      "science": 4,
+      "sport": 2,
+      "music": 4,
+      "art": 2,
+      "guest": 5,
+      "current_affairs": 5,
+      "general_knowledge": 3,
+      "film": 5
+    },
+    "double_up_category": "music",
+    "round_position": [
+      18,
+      16,
+      10,
+      7,
+      7
+    ]
+  },
+  {
+    "date": "2024-08-01",
+    "category_scores": {
+      "history": 3,
+      "geography": 0,
+      "science": 2,
+      "sport": 1,
+      "music": 1.5,
+      "art": 3,
+      "guest": 0,
+      "current_affairs": 3,
+      "general_knowledge": 0.5,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      26,
+      27,
+      27,
+      28,
+      28
+    ]
+  },
+  {
+    "date": "2024-08-15",
+    "category_scores": {
+      "history": 3,
+      "geography": 2,
+      "science": 2,
+      "sport": 2,
+      "music": 2.5,
+      "art": 2,
+      "guest": 2,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "film",
+    "round_position": [
+      15,
+      20,
+      24,
+      25,
+      15
+    ]
+  },
+  {
+    "date": "2024-08-22",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 2,
+      "sport": 3,
+      "music": 4,
+      "art": 2,
+      "guest": 4,
+      "current_affairs": 1,
+      "general_knowledge": 1,
+      "film": 0
+    },
+    "double_up_category": "music",
+    "round_position": [
+      11,
+      21,
+      15,
+      21,
+      23
+    ]
+  },
+  {
+    "date": "2024-08-29",
+    "category_scores": {
+      "history": 5,
+      "geography": 4,
+      "science": 4,
+      "sport": 3,
+      "music": 3,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "general_knowledge",
+    "round_position": [
+      5,
+      4,
+      11,
+      12,
+      7
+    ]
+  },
+  {
+    "date": "2024-09-12",
+    "category_scores": {
+      "history": 3,
+      "geography": 5,
+      "science": 4,
+      "sport": 2,
+      "music": 4,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 4
+    },
+    "double_up_category": "film",
+    "round_position": [
+      14,
+      9,
+      11,
+      11,
+      3
+    ]
+  },
+  {
+    "date": "2024-09-19",
+    "category_scores": {
+      "history": 4,
+      "geography": 0,
+      "science": 3,
+      "sport": 3,
+      "music": 4,
+      "art": 5,
+      "guest": 5,
+      "current_affairs": 4,
+      "general_knowledge": 4,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      25,
+      22,
+      5,
+      8,
+      9
+    ]
+  },
+  {
+    "date": "2024-09-26",
+    "category_scores": {
+      "history": 3,
+      "geography": 2,
+      "science": 2,
+      "sport": 4,
+      "music": 4,
+      "art": 2.5,
+      "guest": 3,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 2
+    },
+    "double_up_category": "film",
+    "round_position": [
+      14,
+      11,
+      12,
+      13,
+      17
+    ]
+  },
+  {
+    "date": "2024-10-03",
+    "category_scores": {
+      "history": 3,
+      "geography": 3,
+      "science": 4,
+      "sport": 0,
+      "music": 2.5,
+      "art": 1,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 0,
+      "film": 2
+    },
+    "double_up_category": "art",
+    "round_position": [
+      14,
+      14,
+      15,
+      14,
+      21
+    ]
+  },
+  {
+    "date": "2024-10-10",
+    "category_scores": {
+      "history": 5,
+      "geography": 4,
+      "science": 3,
+      "sport": 5,
+      "music": 3.5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      2,
+      4,
+      1,
+      3,
+      4
+    ]
+  },
+  {
+    "date": "2024-10-17",
+    "category_scores": {
+      "history": 4,
+      "geography": 3,
+      "science": 3,
+      "sport": 3,
+      "music": 2,
+      "art": 0,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 2,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      12,
+      13,
+      28,
+      21,
+      24
+    ]
+  },
+  {
+    "date": "2024-10-24",
+    "category_scores": {
+      "history": 3,
+      "geography": 3,
+      "science": 4,
+      "sport": 3,
+      "music": 4,
+      "art": 4,
+      "guest": 3,
+      "current_affairs": 2,
+      "general_knowledge": 4,
+      "film": 2
+    },
+    "double_up_category": "music",
+    "round_position": [
+      5,
+      3,
+      2,
+      6,
+      4
+    ]
+  },
+  {
+    "date": "2024-10-31",
+    "category_scores": {
+      "history": 2,
+      "geography": 5,
+      "science": 2,
+      "sport": 5,
+      "music": 5,
+      "art": 1,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 1
+    },
+    "double_up_category": "music",
+    "round_position": [
+      9,
+      11,
+      6,
+      3,
+      7
+    ]
+  },
+  {
+    "date": "2024-11-07",
+    "category_scores": {
+      "history": 2,
+      "geography": 4,
+      "science": 3,
+      "sport": 5,
+      "music": 3,
+      "art": 4,
+      "guest": 3,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      11,
+      10,
+      9,
+      10,
+      10
+    ]
+  },
+  {
+    "date": "2024-11-14",
+    "category_scores": {
+      "history": 4,
+      "geography": 3,
+      "science": 4,
+      "sport": 4,
+      "music": 4.5,
+      "art": 3,
+      "guest": 2,
+      "current_affairs": 4,
+      "general_knowledge": 5,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      10,
+      8,
+      3,
+      6,
+      5
+    ]
+  },
+  {
+    "date": "2024-11-28",
+    "category_scores": {
+      "history": 3,
+      "geography": 2,
+      "science": 1,
+      "sport": 1,
+      "music": 2,
+      "art": 1,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 2,
+      "film": 3
+    },
+    "double_up_category": "history",
+    "round_position": [
+      3,
+      10,
+      9,
+      15,
+      15
+    ]
+  },
+  {
+    "date": "2024-12-05",
+    "category_scores": {
+      "history": 1,
+      "geography": 3,
+      "science": 2,
+      "sport": 0,
+      "music": 2.5,
+      "art": 3,
+      "guest": 3,
+      "current_affairs": 2,
+      "general_knowledge": 4,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      12,
+      14,
+      24,
+      18,
+      17
+    ]
+  },
+  {
+    "date": "2025-01-23",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 3,
+      "sport": 3,
+      "music": 1.5,
+      "art": 3,
+      "guest": 1,
+      "current_affairs": 4,
+      "general_knowledge": 3.5,
+      "film": 0
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      21,
+      18,
+      20,
+      21,
+      20
+    ]
+  },
+  {
+    "date": "2025-01-30",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 5,
+      "sport": 4,
+      "music": 4,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 5,
+      "general_knowledge": 2,
+      "film": 5
+    },
+    "double_up_category": "music",
+    "round_position": [
+      26,
+      21,
+      7,
+      9,
+      13
+    ]
+  },
+  {
+    "date": "2025-02-13",
+    "category_scores": {
+      "history": 4,
+      "geography": 3,
+      "science": 3,
+      "sport": 2,
+      "music": 4.5,
+      "art": 4,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      8,
+      16,
+      5,
+      7,
+      11
+    ]
+  },
+  {
+    "date": "2025-02-20",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 0,
+      "sport": 1,
+      "music": 3.5,
+      "art": 3,
+      "guest": 3,
+      "current_affairs": 4,
+      "general_knowledge": 1,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      28,
+      28,
+      23,
+      23,
+      24
+    ]
+  },
+  {
+    "date": "2025-03-13",
+    "category_scores": {
+      "history": 2,
+      "geography": 1,
+      "science": 2,
+      "sport": 2,
+      "music": 4,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 5
+    },
+    "double_up_category": "music",
+    "round_position": [
+      26,
+      23,
+      11,
+      12,
+      13
+    ]
+  },
+  {
+    "date": "2025-03-27",
+    "category_scores": {
+      "history": 2,
+      "geography": 3,
+      "science": 4,
+      "sport": 3,
+      "music": 3.5,
+      "art": 2,
+      "guest": 3,
+      "current_affairs": 5,
+      "general_knowledge": 3,
+      "film": 3
+    },
+    "double_up_category": "music",
+    "round_position": [
+      21,
+      20,
+      10,
+      11,
+      13
+    ]
+  },
+  {
+    "date": "2025-04-03",
+    "category_scores": {
+      "history": 2,
+      "geography": 3,
+      "science": 3,
+      "sport": 2,
+      "music": 3,
+      "art": 2,
+      "guest": 4,
+      "current_affairs": 4,
+      "general_knowledge": 2,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      19,
+      21,
+      24,
+      16,
+      20
+    ]
+  },
+  {
+    "date": "2025-04-10",
+    "category_scores": {
+      "history": 3,
+      "geography": 1.5,
+      "science": 2,
+      "sport": 2,
+      "music": 4,
+      "art": 4,
+      "guest": 1,
+      "current_affairs": 5,
+      "general_knowledge": 5,
+      "film": 1
+    },
+    "double_up_category": "music",
+    "round_position": [
+      18,
+      20,
+      7,
+      11,
+      13
+    ]
+  },
+  {
+    "date": "2025-04-17",
+    "category_scores": {
+      "history": 2,
+      "geography": 3,
+      "science": 1,
+      "sport": 2,
+      "music": 2,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 4,
+      "general_knowledge": 5,
+      "film": 1
+    },
+    "double_up_category": "general_knowledge",
+    "round_position": [
+      13,
+      14,
+      13,
+      12,
+      7
+    ]
+  },
+  {
+    "date": "2025-04-24",
+    "category_scores": {
+      "history": 2,
+      "geography": 4,
+      "science": 1,
+      "sport": 1,
+      "music": 3.5,
+      "art": 2,
+      "guest": 4,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 3
+    },
+    "double_up_category": "music",
+    "round_position": [
+      13,
+      21,
+      16,
+      11,
+      13
+    ]
+  },
+  {
+    "date": "2025-05-15",
+    "category_scores": {
+      "history": 2,
+      "geography": 2.5,
+      "science": 3,
+      "sport": 2,
+      "music": 2,
+      "art": 1,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 3,
+      "film": 2
+    },
+    "double_up_category": "art",
+    "round_position": [
+      20,
+      23,
+      25,
+      26,
+      25
+    ]
+  },
+  {
+    "date": "2025-05-22",
+    "category_scores": {
+      "history": 2,
+      "geography": 2,
+      "science": 4,
+      "sport": 3,
+      "music": 4,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "music",
+    "round_position": [
+      13,
+      11,
+      1,
+      5,
+      6
+    ]
+  },
+  {
+    "date": "2025-06-26",
+    "category_scores": {
+      "history": 4,
+      "geography": 3,
+      "science": 2,
+      "sport": 3,
+      "music": 4,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      7,
+      12,
+      6,
+      7,
+      6
+    ]
+  },
+  {
+    "date": "2025-07-10",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 4,
+      "sport": 3,
+      "music": 4,
+      "art": 4,
+      "guest": 2,
+      "current_affairs": 4,
+      "general_knowledge": 2,
+      "film": 1
+    },
+    "double_up_category": "music",
+    "round_position": [
+      15,
+      13,
+      3,
+      7,
+      8
+    ]
+  },
+  {
+    "date": "2025-07-17",
+    "category_scores": {
+      "history": 4,
+      "geography": 4,
+      "science": 2,
+      "sport": 5,
+      "music": 3.5,
+      "art": 2,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 5
+    },
+    "double_up_category": "music",
+    "round_position": [
+      5,
+      11,
+      3,
+      5,
+      6
+    ]
+  },
+  {
+    "date": "2025-07-24",
+    "category_scores": {
+      "history": 2,
+      "geography": 2,
+      "science": 1,
+      "sport": 2,
+      "music": 2.5,
+      "art": 3,
+      "guest": 1,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 0
+    },
+    "double_up_category": "art",
+    "round_position": [
+      15,
+      21,
+      13,
+      13,
+      23
+    ]
+  },
+  {
+    "date": "2025-07-31",
+    "category_scores": {
+      "history": 4,
+      "geography": 0,
+      "science": 4,
+      "sport": 1,
+      "music": 2.5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 1,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      15,
+      14,
+      14,
+      12,
+      15
+    ]
+  },
+  {
+    "date": "2025-08-14",
+    "category_scores": {
+      "history": 5,
+      "geography": 4,
+      "science": 4,
+      "sport": 1,
+      "music": 3,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 2,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      6,
+      20,
+      26,
+      19,
+      23
+    ]
+  },
+  {
+    "date": "2025-08-21",
+    "category_scores": {
+      "history": 3,
+      "geography": 2,
+      "science": 1,
+      "sport": 2,
+      "music": 3.5,
+      "art": 5,
+      "guest": 4,
+      "current_affairs": 1,
+      "general_knowledge": 3,
+      "film": 1
+    },
+    "double_up_category": "music",
+    "round_position": [
+      11,
+      23,
+      12,
+      19,
+      21
+    ]
+  },
+  {
+    "date": "2025-08-28",
+    "category_scores": {
+      "history": 5,
+      "geography": 5,
+      "science": 3,
+      "sport": 2,
+      "music": 4,
+      "art": 2,
+      "guest": 4,
+      "current_affairs": 4,
+      "general_knowledge": 2,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      3,
+      7,
+      5,
+      9,
+      12
+    ]
+  },
+  {
+    "date": "2025-09-18",
+    "category_scores": {
+      "history": 2,
+      "geography": 4,
+      "science": 2,
+      "sport": 2,
+      "music": 0,
+      "art": 2,
+      "guest": 5,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 1
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      22,
+      26,
+      29,
+      17,
+      24
+    ]
+  },
+  {
+    "date": "2025-09-25",
+    "category_scores": {
+      "history": 1,
+      "geography": 2,
+      "science": 2,
+      "sport": 1,
+      "music": 4,
+      "art": 5,
+      "guest": 4,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      28,
+      28,
+      26,
+      21,
+      23
+    ]
+  },
+  {
+    "date": "2025-10-02",
+    "category_scores": {
+      "history": 1,
+      "geography": 1,
+      "science": 3,
+      "sport": 5,
+      "music": 3.5,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 3,
+      "film": 2
+    },
+    "double_up_category": "music",
+    "round_position": [
+      22,
+      18,
+      15,
+      19,
+      20
+    ]
+  },
+  {
+    "date": "2025-10-09",
+    "category_scores": {
+      "history": 2,
+      "geography": 4,
+      "science": 3,
+      "sport": 3,
+      "music": 4.5,
+      "art": 2,
+      "guest": 3,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 2.5
+    },
+    "double_up_category": "art",
+    "round_position": [
+      12,
+      14,
+      16,
+      19,
+      18
+    ]
+  },
+  {
+    "date": "2025-10-30",
+    "category_scores": {
+      "history": 2,
+      "geography": 4,
+      "science": 4,
+      "sport": 4,
+      "music": 3,
+      "art": 4,
+      "guest": 3,
+      "current_affairs": 3,
+      "general_knowledge": 2,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      9,
+      7,
+      3,
+      4,
+      7
+    ]
+  },
+  {
+    "date": "2025-11-06",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 3,
+      "sport": 5,
+      "music": 5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 5
+    },
+    "double_up_category": "music",
+    "round_position": [
+      8,
+      8,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "date": "2025-11-13",
+    "category_scores": {
+      "history": 4,
+      "geography": 2,
+      "science": 2,
+      "sport": 4,
+      "music": 4.5,
+      "art": 2,
+      "guest": 1,
+      "current_affairs": 3,
+      "general_knowledge": 2,
+      "film": 2
+    },
+    "double_up_category": "music",
+    "round_position": [
+      12,
+      15,
+      5,
+      12,
+      17
+    ]
+  },
+  {
+    "date": "2025-11-27",
+    "category_scores": {
+      "history": 3.5,
+      "geography": 2,
+      "science": 4,
+      "sport": 1,
+      "music": 3,
+      "art": 2,
+      "guest": 5,
+      "current_affairs": 1,
+      "general_knowledge": 5,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      25,
+      30,
+      29,
+      21,
+      20
+    ]
+  },
+  {
+    "date": "2025-12-04",
+    "category_scores": {
+      "history": 1,
+      "geography": 3,
+      "science": 3,
+      "sport": 3,
+      "music": 2.5,
+      "art": 2,
+      "guest": 5,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      13,
+      14,
+      14,
+      11,
+      13
+    ]
+  },
+  {
+    "date": "2026-01-22",
+    "category_scores": {
+      "history": 2,
+      "geography": 2,
+      "science": 4,
+      "sport": 3,
+      "music": 3,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 5,
+      "general_knowledge": 4,
+      "film": 4
+    },
+    "double_up_category": "music",
+    "round_position": [
+      19,
+      18,
+      12,
+      12,
+      11
+    ]
+  },
+  {
+    "date": "2026-02-05",
+    "category_scores": {
+      "history": 2,
+      "geography": 2,
+      "science": 1,
+      "sport": 0,
+      "music": 1.5,
+      "art": 4,
+      "guest": 2,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      24,
+      27,
+      27,
+      26,
+      26
+    ]
+  },
+  {
+    "date": "2026-02-12",
+    "category_scores": {
+      "history": 3,
+      "geography": 5,
+      "science": 3,
+      "sport": 4,
+      "music": 3.5,
+      "art": 1,
+      "guest": 4,
+      "current_affairs": 4,
+      "general_knowledge": 2,
+      "film": 2
+    },
+    "double_up_category": "music",
+    "round_position": [
+      8,
+      10,
+      10,
+      9,
+      17
+    ]
+  },
+  {
+    "date": "2026-02-26",
+    "category_scores": {
+      "history": 5,
+      "geography": 3,
+      "science": 3,
+      "sport": 3,
+      "music": 2.5,
+      "art": 4,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      7,
+      12,
+      13,
+      7,
+      7
+    ]
+  },
+  {
+    "date": "2026-03-12",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 3,
+      "sport": 2,
+      "music": 2,
+      "art": 2,
+      "guest": 5,
+      "current_affairs": 1,
+      "general_knowledge": 3,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      11,
+      21,
+      30,
+      22,
+      26
+    ]
+  },
+  {
+    "date": "2026-04-16",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 2,
+      "sport": 3,
+      "music": 3.5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      20,
+      22,
+      20,
+      17,
+      11
+    ]
+  },
+  {
+    "date": "2026-05-07",
+    "category_scores": {
+      "history": 3,
+      "geography": 3,
+      "science": 1,
+      "sport": 4,
+      "music": 4,
+      "art": 2,
+      "guest": 5,
+      "current_affairs": 2,
+      "general_knowledge": 5,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      10,
+      12,
+      12,
+      9,
+      9
+    ]
+  },
+  {
+    "date": "2026-05-14",
+    "category_scores": {
+      "history": 3,
+      "geography": 2,
+      "science": 4,
+      "sport": 4,
+      "music": 5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 5,
+      "general_knowledge": 3,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      131,
+      17,
+      11,
+      7,
+      6
+    ]
+  },
+  {
+    "date": "2026-05-21",
+    "category_scores": {
+      "history": 2,
+      "geography": 3,
+      "science": 4,
+      "sport": 2,
+      "music": 2.5,
+      "art": 2,
+      "guest": 4,
+      "current_affairs": 2,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      10,
+      14,
+      18,
+      15,
+      14
+    ]
+  },
+  {
+    "date": "2026-05-28",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 2,
+      "sport": 3,
+      "music": 3.5,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      5,
+      12,
+      14,
+      6,
+      7
+    ]
+  },
+  {
+    "date": "2026-06-10",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 4,
+      "sport": 2,
+      "music": 3,
+      "art": 1,
+      "guest": 3,
+      "current_affairs": 4,
+      "general_knowledge": 4,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      6,
+      12,
+      12,
+      11,
+      8
+    ]
+  },
+  {
+    "date": "2026-07-23",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 3,
+      "sport": 4,
+      "music": 4.5,
+      "art": 4,
+      "guest": 4,
+      "current_affairs": 4,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      24,
+      20,
+      14,
+      4,
+      4
+    ]
+  },
+  {
+    "date": "2026-07-30",
+    "category_scores": {
+      "history": 4,
+      "geography": 2,
+      "science": 2,
+      "sport": 3,
+      "music": 3.5,
+      "art": 4,
+      "guest": 3,
+      "current_affairs": 4,
+      "general_knowledge": 5,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      10,
+      15,
+      11,
+      8,
+      9
+    ]
+  },
+  {
+    "date": "2026-08-06",
+    "category_scores": {
+      "history": 4,
+      "geography": 5,
+      "science": 3,
+      "sport": 2,
+      "music": 4,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 3,
+      "film": 5
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      4,
+      10,
+      6,
+      4,
+      2
+    ]
+  },
+  {
+    "date": "2026-08-27",
+    "category_scores": {
+      "history": 5,
+      "geography": 4,
+      "science": 3,
+      "sport": 4,
+      "music": 2,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 4
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      9,
+      8,
+      16,
+      18,
+      18
+    ]
+  },
+  {
+    "date": "2026-09-03",
+    "category_scores": {
+      "history": 4,
+      "geography": 2,
+      "science": 2,
+      "sport": 4,
+      "music": 4,
+      "art": 2,
+      "guest": 5,
+      "current_affairs": 1,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      19,
+      19,
+      20,
+      11,
+      13
+    ]
+  },
+  {
+    "date": "2026-09-10",
+    "category_scores": {
+      "history": 3,
+      "geography": 1,
+      "science": 4,
+      "sport": 3,
+      "music": 3,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      16,
+      15,
+      16,
+      8,
+      10
+    ]
+  },
+  {
+    "date": "2026-09-17",
+    "category_scores": {
+      "history": 4,
+      "geography": 3,
+      "science": 0,
+      "sport": 4,
+      "music": 5,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 5,
+      "general_knowledge": 2,
+      "film": 1
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      12,
+      23,
+      17,
+      8,
+      16
+    ]
+  },
+  {
+    "date": "2026-09-23",
+    "category_scores": {
+      "history": 5,
+      "geography": 4,
+      "science": 4,
+      "sport": 3,
+      "music": 2,
+      "art": 3,
+      "guest": 5,
+      "current_affairs": 3,
+      "general_knowledge": 2,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      2,
+      7,
+      10,
+      8,
+      11
+    ]
+  },
+  {
+    "date": "2026-10-01",
+    "category_scores": {
+      "history": 2,
+      "geography": 2,
+      "science": 4,
+      "sport": 2,
+      "music": 1.5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 2,
+      "general_knowledge": 3,
+      "film": 4
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      18,
+      17,
+      20,
+      18,
+      15
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "category_scores": {
+      "history": 3,
+      "geography": 2,
+      "science": 3,
+      "sport": 4,
+      "music": 2.5,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 2,
+      "general_knowledge": 2,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      23,
+      20,
+      20,
+      12,
+      17
+    ]
+  },
+  {
+    "date": "2026-10-15",
+    "category_scores": {
+      "history": 3,
+      "geography": 4,
+      "science": 4,
+      "sport": 4,
+      "music": 4.5,
+      "art": 3,
+      "guest": 4,
+      "current_affairs": 4,
+      "general_knowledge": 2,
+      "film": 5
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      8,
+      8,
+      8,
+      4,
+      5
+    ]
+  },
+  {
+    "date": "2026-10-22",
+    "category_scores": {
+      "history": 5,
+      "geography": 4,
+      "science": 4,
+      "sport": 3,
+      "music": 4.5,
+      "art": 4,
+      "guest": 5,
+      "current_affairs": 5,
+      "general_knowledge": 3,
+      "film": 2
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      1,
+      10,
+      7,
+      2,
+      4
+    ]
+  },
+  {
+    "date": "2026-11-05",
+    "category_scores": {
+      "history": 4,
+      "geography": 1,
+      "science": 2,
+      "sport": 3,
+      "music": 3,
+      "art": 3,
+      "guest": 1,
+      "current_affairs": 3,
+      "general_knowledge": 4,
+      "film": 3
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      11,
+      17,
+      20,
+      22,
+      18
+    ]
+  },
+  {
+    "date": "2026-11-12",
+    "category_scores": {
+      "history": 2,
+      "geography": 3.5,
+      "science": 3.5,
+      "sport": 2,
+      "music": 4.5,
+      "art": 3,
+      "guest": 3,
+      "current_affairs": 3,
+      "general_knowledge": 5,
+      "film": 1
+    },
+    "double_up_category": "guest",
+    "round_position": [
+      15,
+      17,
+      15,
+      13,
+      13
+    ]
   }
 ]
