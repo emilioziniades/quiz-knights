@@ -7,6 +7,7 @@
     "dev:importer": "npm run dev --workspace quiz-knights-importer",
     "build:web": "npm run build --workspace quiz-knights",
     "build:importer": "npm run build --workspace quiz-knights-importer",
+    "validate:data": "npm run validate --workspace @quiz-knights/data",
     "test:importer": "npm run test --workspace quiz-knights-importer"
   },
   "devDependencies": {

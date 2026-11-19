@@ -44,7 +44,11 @@ let fitPreviewImage: (() => void) | null = null
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options)
   const body = await response.json()
-  if (!response.ok) throw new Error(body.error || `Request failed (${response.status})`)
+  if (!response.ok) {
+    const error = new Error(body.error || `Request failed (${response.status})`) as Error & { sheetId?: string }
+    if (typeof body.sheetId === "string") error.sheetId = body.sheetId
+    throw error
+  }
   return body as T
 }
 
@@ -255,7 +259,16 @@ async function save() {
     const result = await api<{ results: number }>("/api/save", { method: "POST" })
     await refresh(selectedHash)
     status(`Saved ${result.results} results to SQLite and packages/data`)
-  } catch (error) { status((error as Error).message, true) }
+  } catch (error) {
+    const failure = error as Error & { sheetId?: string }
+    if (failure.sheetId && state.images.some((image) => image.hash === failure.sheetId)) {
+      imageFilter = "scoresheet"
+      filenameQuery = ""
+      selectedHash = failure.sheetId
+      render()
+    }
+    status(failure.message, true)
+  }
 }
 
 function render() {

@@ -86,7 +86,8 @@ export function createApi() {
       }
       return json(response, 404, { error: "Not found" })
     }).catch((error) => {
-      if (!response.headersSent) json(response, error.status || 400, { error: error.message })
+      if (!response.headersSent) json(response, error.status || 400,
+        { error: error.message, sheetId: error.sheetId })
     })
   }
 }

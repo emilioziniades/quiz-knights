@@ -2,11 +2,9 @@ import { createHash, randomUUID } from "node:crypto"
 import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs"
 import { dirname } from "node:path"
 import { DatabaseSync } from "node:sqlite"
+import { categories, validateResult } from "@quiz-knights/data/validation"
 
-export const categories = [
-  "history", "geography", "science", "sport", "music", "art", "guest",
-  "current_affairs", "general_knowledge", "film",
-]
+export { categories }
 
 const schema = `
   PRAGMA foreign_keys = ON;
@@ -101,29 +99,11 @@ function migrateLegacyClassifications(db) {
 }
 
 function validateRecord(value) {
-  if (!value || typeof value !== "object") throw new Error("Result is required")
-  const date = value.date
-  if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
-      Number.isNaN(Date.parse(`${date}T00:00:00Z`)) ||
-      new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) !== date) {
-    throw new Error("Enter a valid quiz date (YYYY-MM-DD)")
-  }
-  const scores = value.category_scores
-  if (!scores || typeof scores !== "object" || categories.some((name) =>
-    typeof scores[name] !== "number" || !Number.isFinite(scores[name]) ||
-    scores[name] < 0 || scores[name] > 5 || !Number.isInteger(scores[name] * 2))) {
-    throw new Error("Enter every category score from 0 to 5 in half-point steps")
-  }
-  if (!categories.includes(value.double_up_category)) {
-    throw new Error("Choose a double-up category")
-  }
-  if (!Array.isArray(value.round_position) || value.round_position.length !== 5 ||
-      value.round_position.some((position) => !Number.isInteger(position) || position < 1)) {
-    throw new Error("Enter five positive round positions")
-  }
+  const errors = validateResult(value)
+  if (errors.length) throw new Error(errors.join("; "))
   return {
-    date,
-    category_scores: Object.fromEntries(categories.map((name) => [name, scores[name]])),
+    date: value.date,
+    category_scores: Object.fromEntries(categories.map((name) => [name, value.category_scores[name]])),
     double_up_category: value.double_up_category,
     round_position: value.round_position,
   }
@@ -274,7 +254,13 @@ export function openStore(databasePath, exportPath) {
       const ready = drafts.flatMap(({ sheet_id, payload, saved_date }) => {
         const draft = JSON.parse(payload)
         if (!saved_date && !hasAllRecordFields(draft)) return []
-        return [{ sheetId: sheet_id, record: validateRecord(draft) }]
+        try {
+          return [{ sheetId: sheet_id, record: validateRecord(draft) }]
+        } catch (error) {
+          error.sheetId = sheet_id
+          error.message = `Result for ${draft.date || "unknown date"}: ${error.message}`
+          throw error
+        }
       })
 
       withTransaction(db, () => {

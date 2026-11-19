@@ -3,7 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "scripts": {
+    "validate": "node validate.mjs",
+    "test": "node validate.test.mjs"
+  },
   "exports": {
-    "./data.json": "./data.json"
+    "./data.json": "./data.json",
+    "./validation": "./validation.mjs"
   }
 }
